@@ -156,40 +156,6 @@ html, body {
   display: none; 
 }
 
-.frame-overlay {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 4;
-  border: 6px solid transparent;
-  background:
-    linear-gradient(var(--cream), var(--cream)) padding-box,
-    linear-gradient(135deg, rgba(201,168,76,0.8), transparent 40%, transparent 60%, rgba(201,168,76,0.8)) border-box;
-}
-.frame-corner {
-  position: absolute;
-  width: 28px; height: 28px;
-  border-color: var(--gold);
-  border-style: solid;
-  z-index: 5;
-}
-.frame-corner.tl { top:8px; left:8px; border-width:3px 0 0 3px; }
-.frame-corner.tr { top:8px; right:8px; border-width:3px 3px 0 0; }
-.frame-corner.bl { bottom:8px; left:8px; border-width:0 0 3px 3px; }
-.frame-corner.br { bottom:8px; right:8px; border-width:0 3px 3px 0; }
-
-.location-label {
-  position: absolute;
-  bottom: 14px; left: 14px;
-  z-index: 6;
-  background: rgba(245,237,224,0.92);
-  border: 1px solid rgba(201,168,76,0.5);
-  padding: 5px 12px;
-  font-family: 'Cinzel Decorative', serif;
-  font-size: clamp(0.5rem, 1.3vw, 0.62rem);
-  letter-spacing: 0.18em;
-  color: var(--dark);
-  display: none;
-}
-
 .status-bar {
   position: absolute;
   top: 12px; left: 50%; transform: translateX(-50%);
@@ -205,24 +171,6 @@ html, body {
   display: none;
 }
 .status-bar.show { display: block; }
-
-.preview-placeholder {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 12px; z-index: 2;
-  background: linear-gradient(135deg, #1a1208, #0d0904);
-}
-.placeholder-icon { font-size: 3rem; opacity: 0.4; }
-.placeholder-text {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: clamp(0.82rem, 1.8vw, 1rem);
-  color: rgba(245,237,224,0.45);
-  text-align: center;
-  max-width: 260px;
-  line-height: 1.6;
-}
 
 .controls {
   display: flex; flex-direction: column;
@@ -460,22 +408,21 @@ html, body {
     <img id="bgImg" style="display:none" alt="Background">
 
     
-    <div class="frame-overlay"></div>
-    <div class="frame-corner tl"></div>
-    <div class="frame-corner tr"></div>
-    <div class="frame-corner bl"></div>
-    <div class="frame-corner br"></div>
+    
+    
+    
+    
+    
 
     
-    <div class="location-label" id="location-label">📍 Rizal Park, Manila</div>
+    
 
     
     <div class="status-bar" id="status-bar">Loading AI segmentation...</div>
 
     
-    <div class="preview-placeholder" id="placeholder">
-      <div class="placeholder-icon">📸</div>
-      <div class="placeholder-text">Select a destination above, then start your camera to take a photo with Rizal</div>
+    
+      
     </div>
   </div>
 
@@ -545,7 +492,6 @@ const video       = document.getElementById('inputVideo');
 const canvas      = document.getElementById('outputCanvas');
 const ctx         = canvas.getContext('2d');
 const statusBar   = document.getElementById('status-bar');
-const placeholder = document.getElementById('placeholder');
 
 function loadBgImage(country) {
   return new Promise((resolve) => {
@@ -562,7 +508,7 @@ function selectCountry(btn) {
   document.querySelectorAll('.country-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   selectedCountry = btn.dataset.country;
-  document.getElementById('location-label').textContent = '📍 ' + COUNTRIES[selectedCountry].landmark;
+  
   loadBgImage(selectedCountry).then(img => {
     currentBgImage = img;
     if (!cameraStarted) {
@@ -579,7 +525,7 @@ canvas.width  = 640;
 canvas.height = 480;
 
 function startPreview() {
-  document.getElementById('placeholder').style.display = 'none';
+  
   drawPreviewLoop();
 }
 
@@ -608,8 +554,8 @@ async function startCamera() {
     canvas.width  = video.videoWidth  || 640;
     canvas.height = video.videoHeight || 480;
 
-    placeholder.style.display = 'none';
-    document.getElementById('location-label').style.display = 'block';
+    
+    
     showStatus('Loading AI background removal...');
 
     segmentation = new SelfieSegmentation({
@@ -646,8 +592,8 @@ async function startCamera() {
 }
 
 function startFallbackMode() {
-  placeholder.style.display = 'none';
-  document.getElementById('location-label').style.display = 'block';
+  
+  
   cameraStarted = true;
   document.getElementById('btn-camera').textContent = '⏹ Stop Camera';
   document.getElementById('btn-camera').disabled = false;

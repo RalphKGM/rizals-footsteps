@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Rizal's Footsteps — Photo Booth</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<!-- MediaPipe Selfie Segmentation for background removal -->
+
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
 
@@ -28,7 +28,6 @@ html, body {
   overflow-x: hidden;
 }
 
-/* ── HEADER ── */
 .header {
   text-align: center;
   padding: 28px 20px 16px;
@@ -58,7 +57,6 @@ html, body {
   color: rgba(26,16,8,0.6);
 }
 
-/* ── COUNTRY SELECTOR ── */
 .country-section {
   padding: 24px 20px 10px;
   text-align: center;
@@ -114,14 +112,12 @@ html, body {
   color: rgba(26,16,8,0.5);
 }
 
-/* ── MAIN BOOTH AREA ── */
 .booth-area {
   padding: 20px;
   max-width: 900px;
   margin: 0 auto;
 }
 
-/* Preview window */
 .preview-wrap {
   position: relative;
   width: 100%;
@@ -135,7 +131,6 @@ html, body {
   aspect-ratio: 4/3;
 }
 
-/* Hidden video element for camera input */
 #inputVideo {
   position: absolute;
   width: 100%; height: 100%;
@@ -144,14 +139,12 @@ html, body {
   pointer-events: none;
 }
 
-/* The main composited canvas */
 #outputCanvas {
   width: 100%; height: 100%;
   display: block;
   object-fit: cover;
 }
 
-/* Rizal overlay layer (drawn on canvas) */
 .rizal-layer {
   position: absolute;
   bottom: 0; right: 8%;
@@ -159,10 +152,9 @@ html, body {
   pointer-events: none;
   z-index: 3;
   filter: drop-shadow(2px 2px 8px rgba(0,0,0,0.4));
-  display: none; /* shown once camera starts */
+  display: none; 
 }
 
-/* Frame overlay (decorative border on top of everything) */
 .frame-overlay {
   position: absolute; inset: 0;
   pointer-events: none; z-index: 4;
@@ -183,7 +175,6 @@ html, body {
 .frame-corner.bl { bottom:8px; left:8px; border-width:0 0 3px 3px; }
 .frame-corner.br { bottom:8px; right:8px; border-width:0 3px 3px 0; }
 
-/* Location label on preview */
 .location-label {
   position: absolute;
   bottom: 14px; left: 14px;
@@ -198,7 +189,6 @@ html, body {
   display: none;
 }
 
-/* Status / loading indicator */
 .status-bar {
   position: absolute;
   top: 12px; left: 50%; transform: translateX(-50%);
@@ -215,7 +205,6 @@ html, body {
 }
 .status-bar.show { display: block; }
 
-/* Placeholder when no camera */
 .preview-placeholder {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
@@ -234,7 +223,6 @@ html, body {
   line-height: 1.6;
 }
 
-/* ── CONTROLS ── */
 .controls {
   display: flex; flex-direction: column;
   align-items: center; gap: 12px;
@@ -305,7 +293,6 @@ html, body {
   justify-content: center;
 }
 
-/* ── INSTRUCTIONS ── */
 .instructions {
   max-width: 600px;
   margin: 24px auto 0;
@@ -333,7 +320,6 @@ html, body {
 }
 .instructions li strong { color: var(--dark); }
 
-/* ── RESULT MODAL ── */
 #result-modal {
   position: fixed; inset: 0; z-index: 200;
   background: rgba(10,8,4,0.88);
@@ -389,7 +375,6 @@ html, body {
   color: var(--gold);
 }
 
-/* ── FOOTER ── */
 .footer {
   text-align: center;
   padding: 24px 20px;
@@ -401,13 +386,11 @@ html, body {
   color: rgba(26,16,8,0.4);
 }
 
-/* ── RESPONSIVE ── */
 @media (max-width: 500px) {
   .country-btn { min-width: 80px; padding: 10px 10px; }
   .booth-area { padding: 14px; }
 }
 
-/* Shimmer loading animation */
 @keyframes shimmer {
   0%   { opacity: 0.4; }
   50%  { opacity: 1; }
@@ -418,14 +401,12 @@ html, body {
 </head>
 <body>
 
-<!-- ── HEADER ── -->
 <div class="header">
   <div class="header-eyebrow">Interactive Experience</div>
   <div class="header-title">Rizal's Footsteps</div>
   <div class="header-sub">Take a photo with José Rizal at his historic destinations</div>
 </div>
 
-<!-- ── COUNTRY SELECTOR ── -->
 <div class="country-section">
   <span class="section-label">Choose your destination</span>
   <div class="country-grid">
@@ -462,43 +443,42 @@ html, body {
   </div>
 </div>
 
-<!-- ── BOOTH ── -->
 <div class="booth-area">
   <div class="preview-wrap" id="preview-wrap">
 
-    <!-- Hidden video input -->
+    
     <video id="inputVideo" playsinline autoplay muted></video>
 
-    <!-- Output canvas (composited result) -->
+    
     <canvas id="outputCanvas"></canvas>
 
-    <!-- Rizal SVG overlay (positioned on canvas via JS) -->
+    
     <img id="rizalImg" style="display:none" alt="Rizal">
 
-    <!-- Background image (loaded per country) -->
+    
     <img id="bgImg" style="display:none" alt="Background">
 
-    <!-- Frame corners -->
+    
     <div class="frame-overlay"></div>
     <div class="frame-corner tl"></div>
     <div class="frame-corner tr"></div>
     <div class="frame-corner bl"></div>
     <div class="frame-corner br"></div>
 
-    <!-- Location label -->
+    
     <div class="location-label" id="location-label">📍 Rizal Park, Manila</div>
 
-    <!-- Status -->
+    
     <div class="status-bar" id="status-bar">Loading AI segmentation...</div>
 
-    <!-- Placeholder -->
+    
     <div class="preview-placeholder" id="placeholder">
       <div class="placeholder-icon">📸</div>
       <div class="placeholder-text">Select a destination above, then start your camera to take a photo with Rizal</div>
     </div>
   </div>
 
-  <!-- Controls -->
+  
   <div class="controls">
     <div class="btn-row">
       <button class="btn-primary" id="btn-camera" onclick="startCamera()">📷 Start Camera</button>
@@ -507,7 +487,7 @@ html, body {
     <button class="btn-gold" id="btn-download" onclick="downloadPhoto()">⬇️ Download Photo</button>
   </div>
 
-  <!-- Instructions -->
+  
   <div class="instructions">
     <div class="instructions-title">How to use</div>
     <ol>
@@ -520,7 +500,6 @@ html, body {
   </div>
 </div>
 
-<!-- ── RESULT MODAL ── -->
 <div id="result-modal" onclick="if(event.target===this)closeResult()">
   <div class="result-box">
     <div class="result-title">Your Photo with Rizal!</div>
@@ -534,113 +513,63 @@ html, body {
   </div>
 </div>
 
-<!-- ── FOOTER ── -->
 <div class="footer">
   Rizal's Footsteps &nbsp;·&nbsp; An Interactive Heritage Experience
 </div>
 
 <script>
-/* ══════════════════════════════════════════
-   COUNTRY DATA
-   background: SVG-drawn landmark (no external images needed)
-══════════════════════════════════════════ */
 const COUNTRIES = {
-  philippines: {
-    name: 'Philippines',
-    landmark: 'Rizal Park, Manila',
-    flag: '🇵🇭',
-    bgColor: '#e8f4e8',
-    skyTop: '#87CEEB', skyBot: '#b8dfff',
-    groundColor: '#5a8a3a',
-    draw: drawPhilippines
-  },
-  spain: {
-    name: 'Spain',
-    landmark: 'Puerta del Sol, Madrid',
-    flag: '🇪🇸',
-    bgColor: '#fff3e0',
-    skyTop: '#4fa3d1', skyBot: '#87ceeb',
-    groundColor: '#c8a96e',
-    draw: drawSpain
-  },
-  france: {
-    name: 'France',
-    landmark: 'Eiffel Tower, Paris',
-    flag: '🇫🇷',
-    bgColor: '#f0f4ff',
-    skyTop: '#2c5f8a', skyBot: '#7ab5d4',
-    groundColor: '#6a8a4a',
-    draw: drawFrance
-  },
-  germany: {
-    name: 'Germany',
-    landmark: 'Brandenburg Gate, Berlin',
-    flag: '🇩🇪',
-    bgColor: '#f5f0e8',
-    skyTop: '#3a5a7a', skyBot: '#8ab4cc',
-    groundColor: '#7a7a6a',
-    draw: drawGermany
-  },
-  uk: {
-    name: 'United Kingdom',
-    landmark: 'Tower Bridge, London',
-    flag: '🇬🇧',
-    bgColor: '#e8eef5',
-    skyTop: '#4a5a7a', skyBot: '#9aaabb',
-    groundColor: '#3a5a3a',
-    draw: drawUK
-  },
-  belgium: {
-    name: 'Belgium',
-    landmark: 'Grand Place, Ghent',
-    flag: '🇧🇪',
-    bgColor: '#fdf5e0',
-    skyTop: '#5a7aaa', skyBot: '#aabbd4',
-    groundColor: '#6a5a3a',
-    draw: drawBelgium
-  }
+  philippines: { name: 'Philippines',    landmark: 'Rizal Park, Manila',          flag: '🇵🇭', bg: 'images/philippines.png' },
+  spain:       { name: 'Spain',          landmark: 'Puerta del Sol, Madrid',       flag: '🇪🇸', bg: 'images/spain.png'       },
+  france:      { name: 'France',         landmark: 'Eiffel Tower, Paris',          flag: '🇫🇷', bg: 'images/france.png'      },
+  germany:     { name: 'Germany',        landmark: 'Brandenburg Gate, Berlin',     flag: '🇩🇪', bg: 'images/germany.png'     },
+  uk:          { name: 'United Kingdom', landmark: 'Tower Bridge, London',         flag: '🇬🇧', bg: 'images/uk.png'          },
+  belgium:     { name: 'Belgium',        landmark: 'Grand Place, Ghent',           flag: '🇧🇪', bg: 'images/belgium.png'     }
 };
 
-/* ══════════════════════════════════════════
-   STATE
-══════════════════════════════════════════ */
-let selectedCountry = 'philippines';
-let cameraStarted = false;
-let segmentation = null;
-let videoStream = null;
-let animFrame = null;
-let photoDataURL = null;
-let mpCamera = null;
+const bgImageCache = {};
+const rizalImg = new Image();
+rizalImg.src = 'images/rizal.png';
 
-const video     = document.getElementById('inputVideo');
-const canvas    = document.getElementById('outputCanvas');
-const ctx       = canvas.getContext('2d');
-const statusBar = document.getElementById('status-bar');
+let selectedCountry = 'philippines';
+let cameraStarted   = false;
+let segmentation    = null;
+let videoStream     = null;
+let animFrame       = null;
+let photoDataURL    = null;
+let mpCamera        = null;
+let currentBgImage  = null;
+
+const video       = document.getElementById('inputVideo');
+const canvas      = document.getElementById('outputCanvas');
+const ctx         = canvas.getContext('2d');
+const statusBar   = document.getElementById('status-bar');
 const placeholder = document.getElementById('placeholder');
 
-/* ══════════════════════════════════════════
-   COUNTRY SELECTION
-══════════════════════════════════════════ */
+function loadBgImage(country) {
+  return new Promise((resolve) => {
+    if (bgImageCache[country]) { resolve(bgImageCache[country]); return; }
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload  = () => { bgImageCache[country] = img; resolve(img); };
+    img.onerror = () => { resolve(null); };
+    img.src = COUNTRIES[country].bg;
+  });
+}
+
 function selectCountry(btn) {
   document.querySelectorAll('.country-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   selectedCountry = btn.dataset.country;
-  const c = COUNTRIES[selectedCountry];
-  document.getElementById('location-label').textContent = '📍 ' + c.landmark;
+  document.getElementById('location-label').textContent = '📍 ' + COUNTRIES[selectedCountry].landmark;
+  loadBgImage(selectedCountry).then(img => { currentBgImage = img; });
 }
 
-// Select first by default
 document.querySelector('.country-btn').classList.add('active');
+loadBgImage('philippines').then(img => { currentBgImage = img; });
 
-/* ══════════════════════════════════════════
-   CAMERA + MEDIAPIPE
-══════════════════════════════════════════ */
 async function startCamera() {
-  if (!selectedCountry) {
-    alert('Please choose a destination first!');
-    return;
-  }
-
+  if (!selectedCountry) { alert('Please choose a destination first!'); return; }
   const btn = document.getElementById('btn-camera');
   btn.disabled = true;
   btn.textContent = 'Starting...';
@@ -653,36 +582,30 @@ async function startCamera() {
     });
     video.srcObject = videoStream;
     await video.play();
-
     canvas.width  = video.videoWidth  || 640;
     canvas.height = video.videoHeight || 480;
 
     placeholder.style.display = 'none';
     document.getElementById('location-label').style.display = 'block';
-
     showStatus('Loading AI background removal...');
 
-    // Init MediaPipe Selfie Segmentation
     segmentation = new SelfieSegmentation({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`
     });
     segmentation.setOptions({ modelSelection: 1 });
     segmentation.onResults(onSegmentationResults);
 
-    // Use MediaPipe Camera utility
     mpCamera = new Camera(video, {
-      onFrame: async () => {
-        await segmentation.send({ image: video });
-      },
+      onFrame: async () => { await segmentation.send({ image: video }); },
       width: canvas.width,
       height: canvas.height
     });
     await mpCamera.start();
 
     cameraStarted = true;
-    btn.textContent = '🔄 Switch Country';
+    btn.textContent = '⏹ Stop Camera';
     btn.disabled = false;
-    btn.onclick = () => { stopCamera(); };
+    btn.onclick = () => stopCamera();
     document.getElementById('btn-snap').disabled = false;
     hideStatus();
 
@@ -691,651 +614,104 @@ async function startCamera() {
     btn.disabled = false;
     btn.textContent = '📷 Start Camera';
     hideStatus();
-
     if (err.name === 'NotAllowedError') {
-      alert('Camera access was denied. Please allow camera access in your browser settings and try again.');
+      alert('Camera access was denied. Please allow camera access in your browser settings.');
     } else {
-      // Fallback: run without segmentation (just overlay on live video)
       startFallbackMode();
     }
   }
 }
 
-/* Fallback: no AI segmentation, just draw camera + overlay on canvas */
 function startFallbackMode() {
   placeholder.style.display = 'none';
   document.getElementById('location-label').style.display = 'block';
   cameraStarted = true;
-  document.getElementById('btn-camera').textContent = '🔄 Restart';
+  document.getElementById('btn-camera').textContent = '⏹ Stop Camera';
   document.getElementById('btn-camera').disabled = false;
   document.getElementById('btn-camera').onclick = () => stopCamera();
   document.getElementById('btn-snap').disabled = false;
-  showStatus('Running in basic mode (no background removal)');
+  showStatus('Basic mode — no background removal');
   setTimeout(hideStatus, 3000);
   drawFallbackLoop();
 }
 
 function drawFallbackLoop() {
   if (!cameraStarted) return;
-  canvas.width  = video.videoWidth  || 640;
-  canvas.height = video.videoHeight || 480;
-  const W = canvas.width, H = canvas.height;
+  const W = canvas.width  = video.videoWidth  || 640;
+  const H = canvas.height = video.videoHeight || 480;
+  ctx.clearRect(0, 0, W, H);
+  drawBackground(W, H);
   ctx.save();
-  ctx.scale(-1, 1); ctx.translate(-W, 0); // mirror
+  ctx.globalAlpha = 0.9;
+  ctx.scale(-1, 1);
+  ctx.translate(-W, 0);
   ctx.drawImage(video, 0, 0, W, H);
   ctx.restore();
-  // Draw landmark behind (semi-transparent)
-  drawLandmarkBackground(W, H, 0.55);
+  ctx.globalAlpha = 1;
   drawRizal(W, H);
   animFrame = requestAnimationFrame(drawFallbackLoop);
 }
 
-/* ══════════════════════════════════════════
-   SEGMENTATION RESULTS HANDLER
-══════════════════════════════════════════ */
 function onSegmentationResults(results) {
   const W = canvas.width  = results.image.width;
   const H = canvas.height = results.image.height;
 
   ctx.clearRect(0, 0, W, H);
 
-  // 1. Draw landmark background
-  drawLandmarkBackground(W, H, 1);
+  drawBackground(W, H);
 
-  // 2. Apply segmentation mask — keep only person pixels from camera
-  ctx.save();
-
-  // Draw mask to get person silhouette
-  const maskCanvas = document.createElement('canvas');
-  maskCanvas.width = W; maskCanvas.height = H;
-  const mCtx = maskCanvas.getContext('2d');
-  mCtx.drawImage(results.segmentationMask, 0, 0, W, H);
-
-  // Draw camera frame (mirrored)
   const personCanvas = document.createElement('canvas');
   personCanvas.width = W; personCanvas.height = H;
   const pCtx = personCanvas.getContext('2d');
   pCtx.save();
-  pCtx.scale(-1, 1); pCtx.translate(-W, 0);
+  pCtx.scale(-1, 1);
+  pCtx.translate(-W, 0);
   pCtx.drawImage(results.image, 0, 0, W, H);
   pCtx.restore();
+  pCtx.globalCompositeOperation = 'destination-in';
+  pCtx.drawImage(results.segmentationMask, 0, 0, W, H);
 
-  // Use mask to clip person onto main canvas
   ctx.globalCompositeOperation = 'source-over';
-  // Draw person using mask
-  ctx.drawImage(personCanvas, 0, 0, W, H);
-  // Use destination-in with mask to cut out background
-  const tempCanvas = document.createElement('canvas');
-  tempCanvas.width = W; tempCanvas.height = H;
-  const tCtx = tempCanvas.getContext('2d');
-  tCtx.drawImage(personCanvas, 0, 0);
-  tCtx.globalCompositeOperation = 'destination-in';
-  tCtx.drawImage(maskCanvas, 0, 0);
+  ctx.drawImage(personCanvas, 0, 0);
 
-  // Redraw: bg first, then masked person
-  ctx.clearRect(0, 0, W, H);
-  drawLandmarkBackground(W, H, 1);
-  ctx.drawImage(tempCanvas, 0, 0);
-
-  ctx.restore();
-
-  // 3. Draw Rizal beside the user
+  ctx.globalCompositeOperation = 'source-over';
   drawRizal(W, H);
 
-  // 4. Subtle vignette
-  const vig = ctx.createRadialGradient(W/2,H/2,H*0.3, W/2,H/2,H*0.85);
+  const vig = ctx.createRadialGradient(W/2, H/2, H*0.25, W/2, H/2, H*0.85);
   vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.28)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.2)');
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, W, H);
 }
 
-/* ══════════════════════════════════════════
-   DRAW FUNCTIONS
-══════════════════════════════════════════ */
-function drawLandmarkBackground(W, H, alpha) {
-  ctx.save();
-  ctx.globalAlpha = alpha;
-  const c = COUNTRIES[selectedCountry];
-  c.draw(ctx, W, H);
-  ctx.restore();
+function drawBackground(W, H) {
+  if (currentBgImage) {
+    ctx.drawImage(currentBgImage, 0, 0, W, H);
+  } else {
+    ctx.fillStyle = '#87CEEB';
+    ctx.fillRect(0, 0, W, H);
+  }
 }
 
 function drawRizal(W, H) {
-  // Draw Rizal as SVG-path silhouette on the right side
-  ctx.save();
-  const rizalW = W * 0.22;
-  const rizalH = H * 0.85;
-  const x = W * 0.72;
+  if (!rizalImg.complete || rizalImg.naturalWidth === 0) return;
+  const rizalH = H * 0.88;
+  const aspectRatio = rizalImg.naturalWidth / rizalImg.naturalHeight;
+  const rizalW = rizalH * aspectRatio;
+  const x = W * 0.68;
   const y = H - rizalH;
-  drawRizalFigure(ctx, x, y, rizalW, rizalH);
-  ctx.restore();
+  ctx.drawImage(rizalImg, x, y, rizalW, rizalH);
 }
 
-/* Rizal figure drawn with canvas paths (stylized illustration) */
-function drawRizalFigure(ctx, x, y, w, h) {
-  ctx.save();
-  ctx.translate(x, y);
-  const s = w / 60; // scale factor
-
-  // Shadow
-  ctx.fillStyle = 'rgba(0,0,0,0.22)';
-  ctx.beginPath();
-  ctx.ellipse(w/2, h, w*0.4, h*0.04, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  // Body / coat (dark)
-  ctx.fillStyle = '#1a1208';
-  ctx.beginPath();
-  ctx.moveTo(w*0.2, h*0.35);
-  ctx.lineTo(w*0.0, h*1.0);
-  ctx.lineTo(w*1.0, h*1.0);
-  ctx.lineTo(w*0.8, h*0.35);
-  ctx.lineTo(w*0.65, h*0.32);
-  ctx.lineTo(w*0.5, h*0.38);
-  ctx.lineTo(w*0.35, h*0.32);
-  ctx.closePath();
-  ctx.fill();
-
-  // White shirt collar
-  ctx.fillStyle = '#f0e8d0';
-  ctx.beginPath();
-  ctx.moveTo(w*0.38, h*0.33);
-  ctx.lineTo(w*0.5, h*0.42);
-  ctx.lineTo(w*0.62, h*0.33);
-  ctx.lineTo(w*0.55, h*0.30);
-  ctx.lineTo(w*0.5, h*0.35);
-  ctx.lineTo(w*0.45, h*0.30);
-  ctx.closePath();
-  ctx.fill();
-
-  // Lapels
-  ctx.fillStyle = '#2a1e0e';
-  ctx.beginPath();
-  ctx.moveTo(w*0.35, h*0.32);
-  ctx.lineTo(w*0.42, h*0.48);
-  ctx.lineTo(w*0.5, h*0.38);
-  ctx.lineTo(w*0.58, h*0.48);
-  ctx.lineTo(w*0.65, h*0.32);
-  ctx.lineTo(w*0.5, h*0.42);
-  ctx.closePath();
-  ctx.fill();
-
-  // Neck
-  ctx.fillStyle = '#c8956a';
-  ctx.fillRect(w*0.43, h*0.22, w*0.14, h*0.12);
-
-  // Head
-  ctx.fillStyle = '#c8956a';
-  ctx.beginPath();
-  ctx.ellipse(w*0.5, h*0.16, w*0.18, h*0.14, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  // Hair
-  ctx.fillStyle = '#1a0e04';
-  ctx.beginPath();
-  ctx.ellipse(w*0.5, h*0.08, w*0.18, h*0.08, 0, 0, Math.PI*2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(w*0.5, h*0.11, w*0.185, h*0.065, 0, 0, Math.PI);
-  ctx.fill();
-
-  // Eyes
-  ctx.fillStyle = '#1a0e04';
-  ctx.beginPath(); ctx.arc(w*0.43, h*0.155, w*0.022, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(w*0.57, h*0.155, w*0.022, 0, Math.PI*2); ctx.fill();
-
-  // Eyebrows
-  ctx.strokeStyle = '#1a0e04'; ctx.lineWidth = w*0.025;
-  ctx.beginPath(); ctx.moveTo(w*0.37, h*0.128); ctx.lineTo(w*0.49, h*0.128); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(w*0.51, h*0.128); ctx.lineTo(w*0.63, h*0.128); ctx.stroke();
-
-  // Moustache
-  ctx.fillStyle = '#1a0e04';
-  ctx.beginPath();
-  ctx.moveTo(w*0.42, h*0.185);
-  ctx.quadraticCurveTo(w*0.5, h*0.198, w*0.58, h*0.185);
-  ctx.quadraticCurveTo(w*0.5, h*0.205, w*0.42, h*0.185);
-  ctx.fill();
-
-  // Arms
-  ctx.fillStyle = '#1a1208';
-  // Left arm
-  ctx.beginPath();
-  ctx.moveTo(w*0.2, h*0.35);
-  ctx.lineTo(w*0.0, h*0.65);
-  ctx.lineTo(w*0.08, h*0.68);
-  ctx.lineTo(w*0.28, h*0.42);
-  ctx.closePath(); ctx.fill();
-  // Right arm (holding book)
-  ctx.beginPath();
-  ctx.moveTo(w*0.8, h*0.35);
-  ctx.lineTo(w*1.0, h*0.62);
-  ctx.lineTo(w*0.92, h*0.65);
-  ctx.lineTo(w*0.72, h*0.42);
-  ctx.closePath(); ctx.fill();
-
-  // Book in right hand
-  ctx.fillStyle = '#8b4513';
-  ctx.fillRect(w*0.78, h*0.62, w*0.22, h*0.14);
-  ctx.fillStyle = '#a0522d';
-  ctx.fillRect(w*0.79, h*0.63, w*0.20, h*0.12);
-  ctx.strokeStyle = '#f0e8d0'; ctx.lineWidth = w*0.015;
-  ctx.beginPath(); ctx.moveTo(w*0.89, h*0.63); ctx.lineTo(w*0.89, h*0.75); ctx.stroke();
-
-  // Hands
-  ctx.fillStyle = '#c8956a';
-  ctx.beginPath(); ctx.arc(w*0.04, h*0.665, w*0.06, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(w*0.96, h*0.63, w*0.06, 0, Math.PI*2); ctx.fill();
-
-  // Legs/trousers
-  ctx.fillStyle = '#2a2a2a';
-  ctx.fillRect(w*0.2, h*0.82, w*0.26, h*0.18);
-  ctx.fillRect(w*0.54, h*0.82, w*0.26, h*0.18);
-
-  // Shoes
-  ctx.fillStyle = '#0a0604';
-  ctx.beginPath(); ctx.ellipse(w*0.33, h*1.0, w*0.14, h*0.025, 0, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(w*0.67, h*1.0, w*0.14, h*0.025, 0, 0, Math.PI*2); ctx.fill();
-
-  // Name tag
-  ctx.save();
-  ctx.fillStyle = 'rgba(245,237,224,0.92)';
-  ctx.strokeStyle = 'rgba(201,168,76,0.7)';
-  ctx.lineWidth = 1;
-  const tagW = w*0.9, tagH = h*0.055;
-  const tagX = w*0.05, tagY = h*1.03;
-  ctx.fillRect(tagX, tagY, tagW, tagH);
-  ctx.strokeRect(tagX, tagY, tagW, tagH);
-  ctx.fillStyle = '#1a1208';
-  ctx.font = `bold ${w*0.14}px 'Lora', serif`;
-  ctx.textAlign = 'center';
-  ctx.fillText('José Rizal', w*0.5, tagY + tagH*0.72);
-  ctx.restore();
-
-  ctx.restore();
-}
-
-/* ══════════════════════════════════════════
-   LANDMARK BACKGROUNDS (pure canvas drawing)
-══════════════════════════════════════════ */
-
-function drawPhilippines(ctx, W, H) {
-  // Sky gradient
-  const sky = ctx.createLinearGradient(0,0,0,H*0.65);
-  sky.addColorStop(0, '#1a6fb5'); sky.addColorStop(1, '#87ceeb');
-  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H*0.65);
-
-  // Clouds
-  drawCloud(ctx, W*0.15, H*0.1, W*0.12);
-  drawCloud(ctx, W*0.7,  H*0.08, W*0.1);
-  drawCloud(ctx, W*0.45, H*0.18, W*0.08);
-
-  // Ground / park grass
-  const ground = ctx.createLinearGradient(0, H*0.6, 0, H);
-  ground.addColorStop(0, '#4a8a2a'); ground.addColorStop(1, '#2a5a10');
-  ctx.fillStyle = ground; ctx.fillRect(0, H*0.6, W, H*0.4);
-
-  // Path
-  ctx.fillStyle = '#c8a878';
-  ctx.beginPath();
-  ctx.moveTo(W*0.35, H); ctx.lineTo(W*0.65, H);
-  ctx.lineTo(W*0.58, H*0.62); ctx.lineTo(W*0.42, H*0.62);
-  ctx.closePath(); ctx.fill();
-
-  // Rizal Monument obelisk
-  const mx = W*0.5;
-  ctx.fillStyle = '#d4c9a8';
-  // Base
-  ctx.fillRect(mx-W*0.06, H*0.52, W*0.12, H*0.1);
-  // Shaft
-  ctx.fillRect(mx-W*0.025, H*0.22, W*0.05, H*0.32);
-  // Tip
-  ctx.beginPath();
-  ctx.moveTo(mx-W*0.025, H*0.22);
-  ctx.lineTo(mx, H*0.14);
-  ctx.lineTo(mx+W*0.025, H*0.22);
-  ctx.closePath(); ctx.fill();
-  // Shadow on monument
-  ctx.fillStyle = 'rgba(0,0,0,0.15)';
-  ctx.fillRect(mx, H*0.22, W*0.01, H*0.32);
-
-  // Rizal statue silhouette (tiny on top)
-  ctx.fillStyle = '#8a7a5a';
-  ctx.beginPath(); ctx.arc(mx, H*0.12, W*0.012, 0, Math.PI*2); ctx.fill();
-  ctx.fillRect(mx-W*0.006, H*0.12, W*0.012, H*0.04);
-
-  // Palm trees
-  drawPalm(ctx, W*0.12, H*0.62, H*0.28);
-  drawPalm(ctx, W*0.85, H*0.62, H*0.25);
-
-  // Philippine flag (small, top corner)
-  drawFlag(ctx, W*0.05, H*0.05, W*0.1, H*0.055, 'ph');
-}
-
-function drawSpain(ctx, W, H) {
-  // Sky
-  const sky = ctx.createLinearGradient(0,0,0,H*0.6);
-  sky.addColorStop(0,'#2a6aaa'); sky.addColorStop(1,'#87ceeb');
-  ctx.fillStyle=sky; ctx.fillRect(0,0,W,H*0.6);
-  drawCloud(ctx,W*0.2,H*0.1,W*0.1); drawCloud(ctx,W*0.65,H*0.12,W*0.09);
-
-  // Plaza ground
-  const gr=ctx.createLinearGradient(0,H*0.58,0,H);
-  gr.addColorStop(0,'#d4b896'); gr.addColorStop(1,'#c8a878');
-  ctx.fillStyle=gr; ctx.fillRect(0,H*0.58,W,H*0.42);
-
-  // Cobblestone pattern
-  ctx.strokeStyle='rgba(0,0,0,0.08)'; ctx.lineWidth=1;
-  for(let i=0;i<12;i++) { for(let j=0;j<8;j++) {
-    ctx.strokeRect(i*W/12, H*0.6+j*H*0.05, W/12, H*0.05);
-  }}
-
-  // Puerta del Sol clock tower
-  const bx=W*0.5;
-  // Building body
-  ctx.fillStyle='#e8d5b0';
-  ctx.fillRect(bx-W*0.18, H*0.15, W*0.36, H*0.44);
-  // Windows
-  ctx.fillStyle='#2a4a6a';
-  for(let i=0;i<3;i++) for(let j=0;j<4;j++) {
-    ctx.fillRect(bx-W*0.14+i*W*0.1, H*0.2+j*H*0.08, W*0.06, H*0.055);
-  }
-  // Clock tower top
-  ctx.fillStyle='#d4c0a0';
-  ctx.fillRect(bx-W*0.055, H*0.08, W*0.11, H*0.1);
-  // Clock face
-  ctx.fillStyle='white'; ctx.strokeStyle='#8a7a5a'; ctx.lineWidth=2;
-  ctx.beginPath(); ctx.arc(bx, H*0.12, W*0.038, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-  // Clock hands
-  ctx.strokeStyle='#1a1208'; ctx.lineWidth=2;
-  ctx.beginPath(); ctx.moveTo(bx,H*0.12); ctx.lineTo(bx,H*0.09); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(bx,H*0.12); ctx.lineTo(bx+W*0.025,H*0.125); ctx.stroke();
-  // Roof
-  ctx.fillStyle='#8a7a5a';
-  ctx.beginPath(); ctx.moveTo(bx-W*0.055,H*0.08); ctx.lineTo(bx,H*0.04); ctx.lineTo(bx+W*0.055,H*0.08); ctx.closePath(); ctx.fill();
-
-  // Side buildings
-  ctx.fillStyle='#ddc9a8';
-  ctx.fillRect(W*0.05,H*0.28,W*0.22,H*0.31);
-  ctx.fillRect(W*0.73,H*0.3,W*0.22,H*0.29);
-
-  // Spanish flag
-  drawFlag(ctx,W*0.05,H*0.05,W*0.1,H*0.055,'es');
-}
-
-function drawFrance(ctx, W, H) {
-  // Dusk sky
-  const sky=ctx.createLinearGradient(0,0,0,H*0.65);
-  sky.addColorStop(0,'#1a3a6a'); sky.addColorStop(0.5,'#3a6aaa'); sky.addColorStop(1,'#f4a460');
-  ctx.fillStyle=sky; ctx.fillRect(0,0,W,H*0.65);
-
-  // Stars (evening)
-  ctx.fillStyle='rgba(255,255,220,0.7)';
-  [[0.1,0.08],[0.25,0.05],[0.55,0.07],[0.75,0.04],[0.88,0.09]].forEach(([sx,sy])=>{
-    ctx.beginPath(); ctx.arc(W*sx,H*sy,W*0.005,0,Math.PI*2); ctx.fill();
-  });
-
-  // Ground
-  const gr=ctx.createLinearGradient(0,H*0.62,0,H);
-  gr.addColorStop(0,'#3a5a2a'); gr.addColorStop(1,'#2a4a1a');
-  ctx.fillStyle=gr; ctx.fillRect(0,H*0.62,W,H*0.38);
-
-  // River Seine
-  const river=ctx.createLinearGradient(0,H*0.68,0,H*0.75);
-  river.addColorStop(0,'#1a3a6a'); river.addColorStop(1,'#2a5aaa');
-  ctx.fillStyle=river; ctx.fillRect(0,H*0.7,W,H*0.06);
-  // River shimmer
-  ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=1;
-  for(let i=0;i<8;i++) { ctx.beginPath(); ctx.moveTo(i*W*0.14,H*0.72); ctx.lineTo(i*W*0.14+W*0.08,H*0.73); ctx.stroke(); }
-
-  // Eiffel Tower
-  const ex=W*0.5;
-  ctx.fillStyle='#4a3a2a';
-  // Legs
-  ctx.beginPath(); ctx.moveTo(ex-W*0.14,H*0.65); ctx.lineTo(ex-W*0.04,H*0.42); ctx.lineTo(ex-W*0.015,H*0.42); ctx.lineTo(ex-W*0.08,H*0.65); ctx.closePath(); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(ex+W*0.14,H*0.65); ctx.lineTo(ex+W*0.04,H*0.42); ctx.lineTo(ex+W*0.015,H*0.42); ctx.lineTo(ex+W*0.08,H*0.65); ctx.closePath(); ctx.fill();
-  // First platform
-  ctx.fillRect(ex-W*0.1,H*0.44,W*0.2,H*0.025);
-  // Middle section
-  ctx.beginPath(); ctx.moveTo(ex-W*0.04,H*0.42); ctx.lineTo(ex-W*0.02,H*0.28); ctx.lineTo(ex+W*0.02,H*0.28); ctx.lineTo(ex+W*0.04,H*0.42); ctx.closePath(); ctx.fill();
-  // Second platform
-  ctx.fillRect(ex-W*0.055,H*0.28,W*0.11,H*0.02);
-  // Spire
-  ctx.beginPath(); ctx.moveTo(ex-W*0.02,H*0.28); ctx.lineTo(ex,H*0.1); ctx.lineTo(ex+W*0.02,H*0.28); ctx.closePath(); ctx.fill();
-  // Lights
-  ctx.fillStyle='rgba(255,220,100,0.8)';
-  ctx.beginPath(); ctx.arc(ex,H*0.1,W*0.008,0,Math.PI*2); ctx.fill();
-
-  // French flag
-  drawFlag(ctx,W*0.05,H*0.05,W*0.1,H*0.055,'fr');
-}
-
-function drawGermany(ctx, W, H) {
-  // Overcast sky
-  const sky=ctx.createLinearGradient(0,0,0,H*0.6);
-  sky.addColorStop(0,'#5a6a7a'); sky.addColorStop(1,'#9aaabb');
-  ctx.fillStyle=sky; ctx.fillRect(0,0,W,H*0.6);
-  // Clouds (heavy)
-  drawCloud(ctx,W*0.1,H*0.08,W*0.18,true); drawCloud(ctx,W*0.5,H*0.06,W*0.2,true); drawCloud(ctx,W*0.8,H*0.1,W*0.15,true);
-
-  // Ground plaza (stone)
-  const gr=ctx.createLinearGradient(0,H*0.58,0,H);
-  gr.addColorStop(0,'#8a8a7a'); gr.addColorStop(1,'#6a6a5a');
-  ctx.fillStyle=gr; ctx.fillRect(0,H*0.58,W,H*0.42);
-  // Stone tiles
-  ctx.strokeStyle='rgba(255,255,255,0.1)'; ctx.lineWidth=1;
-  for(let i=0;i<10;i++) for(let j=0;j<6;j++) ctx.strokeRect(i*W*0.1,H*0.6+j*H*0.06,W*0.1,H*0.06);
-
-  // Brandenburg Gate
-  const gx=W*0.5;
-  // Main structure
-  ctx.fillStyle='#d4c9a0';
-  ctx.fillRect(gx-W*0.22,H*0.28,W*0.44,H*0.32);
-  // Columns (6)
-  ctx.fillStyle='#c8bb90';
-  [-0.18,-0.1,-0.03,0.03,0.1,0.18].forEach(off=>{
-    ctx.fillRect(gx+W*off-W*0.025,H*0.3,W*0.05,H*0.28);
-  });
-  // Entablature
-  ctx.fillStyle='#dcd0aa';
-  ctx.fillRect(gx-W*0.22,H*0.27,W*0.44,H*0.04);
-  // Attic/top block
-  ctx.fillStyle='#c8bb90';
-  ctx.fillRect(gx-W*0.2,H*0.18,W*0.4,H*0.1);
-  // Quadriga (chariot + horses silhouette)
-  ctx.fillStyle='#8a7a5a';
-  ctx.fillRect(gx-W*0.07,H*0.12,W*0.14,H*0.07);
-  // Horse heads
-  [-0.06,-0.02,0.02,0.06].forEach(off=>{
-    ctx.beginPath(); ctx.arc(gx+W*off,H*0.1,W*0.025,0,Math.PI*2); ctx.fill();
-  });
-  // Arch openings
-  ctx.fillStyle='rgba(90,100,110,0.6)';
-  ctx.fillRect(gx-W*0.08,H*0.35,W*0.16,H*0.24);
-
-  // Side wings
-  ctx.fillStyle='#c8bb90';
-  ctx.fillRect(gx-W*0.36,H*0.38,W*0.14,H*0.22);
-  ctx.fillRect(gx+W*0.22,H*0.38,W*0.14,H*0.22);
-
-  // German flag
-  drawFlag(ctx,W*0.05,H*0.05,W*0.1,H*0.055,'de');
-}
-
-function drawUK(ctx, W, H) {
-  // Foggy London sky
-  const sky=ctx.createLinearGradient(0,0,0,H*0.65);
-  sky.addColorStop(0,'#4a5a6a'); sky.addColorStop(1,'#9aaabb');
-  ctx.fillStyle=sky; ctx.fillRect(0,0,W,H*0.65);
-  // Fog layer
-  ctx.fillStyle='rgba(200,210,220,0.25)'; ctx.fillRect(0,H*0.45,W,H*0.25);
-
-  // Thames River
-  const river=ctx.createLinearGradient(0,H*0.65,0,H*0.78);
-  river.addColorStop(0,'#2a3a5a'); river.addColorStop(1,'#1a2a4a');
-  ctx.fillStyle=river; ctx.fillRect(0,H*0.65,W,H*0.16);
-  // River ripples
-  ctx.strokeStyle='rgba(255,255,255,0.1)'; ctx.lineWidth=1;
-  for(let i=0;i<6;i++) { ctx.beginPath(); ctx.moveTo(i*W*0.18,H*0.7); ctx.lineTo(i*W*0.18+W*0.1,H*0.72); ctx.stroke(); }
-
-  // Embankment
-  ctx.fillStyle='#5a5a4a'; ctx.fillRect(0,H*0.78,W,H*0.22);
-
-  // Tower Bridge
-  const bx=W*0.5;
-  // Bridge deck
-  ctx.fillStyle='#7a6a5a'; ctx.fillRect(W*0.05,H*0.68,W*0.9,H*0.025);
-  // Left tower
-  ctx.fillStyle='#8a7a6a';
-  ctx.fillRect(bx-W*0.28,H*0.38,W*0.13,H*0.32);
-  // Left tower top
-  ctx.fillStyle='#7a6a5a';
-  ctx.fillRect(bx-W*0.29,H*0.34,W*0.15,H*0.06);
-  ctx.beginPath(); ctx.moveTo(bx-W*0.29,H*0.34); ctx.lineTo(bx-W*0.22,H*0.22); ctx.lineTo(bx-W*0.14,H*0.34); ctx.closePath(); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(bx-W*0.265,H*0.28); ctx.lineTo(bx-W*0.22,H*0.18); ctx.lineTo(bx-W*0.175,H*0.28); ctx.closePath(); ctx.fill();
-  // Right tower
-  ctx.fillStyle='#8a7a6a';
-  ctx.fillRect(bx+W*0.15,H*0.38,W*0.13,H*0.32);
-  ctx.fillStyle='#7a6a5a';
-  ctx.fillRect(bx+W*0.14,H*0.34,W*0.15,H*0.06);
-  ctx.beginPath(); ctx.moveTo(bx+W*0.14,H*0.34); ctx.lineTo(bx+W*0.22,H*0.22); ctx.lineTo(bx+W*0.29,H*0.34); ctx.closePath(); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(bx+W*0.175,H*0.28); ctx.lineTo(bx+W*0.22,H*0.18); ctx.lineTo(bx+W*0.265,H*0.28); ctx.closePath(); ctx.fill();
-  // Suspension cables
-  ctx.strokeStyle='#5a4a3a'; ctx.lineWidth=3;
-  ctx.beginPath(); ctx.moveTo(bx-W*0.22,H*0.25); ctx.lineTo(bx,H*0.5); ctx.lineTo(bx+W*0.22,H*0.25); ctx.stroke();
-  ctx.lineWidth=2;
-  ctx.beginPath(); ctx.moveTo(bx-W*0.22,H*0.32); ctx.lineTo(bx,H*0.54); ctx.lineTo(bx+W*0.22,H*0.32); ctx.stroke();
-  // Arch opening in bridge
-  ctx.fillStyle='rgba(42,58,90,0.5)'; ctx.fillRect(bx-W*0.14,H*0.58,W*0.28,H*0.12);
-  // Windows in towers
-  ctx.fillStyle='rgba(255,220,100,0.6)';
-  [[bx-W*0.24,H*0.41],[bx-W*0.18,H*0.41],[bx-W*0.24,H*0.5],[bx-W*0.18,H*0.5]].forEach(([wx,wy])=>{ ctx.fillRect(wx,wy,W*0.04,H*0.05); });
-  [[bx+W*0.18,H*0.41],[bx+W*0.24,H*0.41],[bx+W*0.18,H*0.5],[bx+W*0.24,H*0.5]].forEach(([wx,wy])=>{ ctx.fillRect(wx,wy,W*0.04,H*0.05); });
-
-  // UK flag
-  drawFlag(ctx,W*0.05,H*0.05,W*0.1,H*0.055,'uk');
-}
-
-function drawBelgium(ctx, W, H) {
-  // Warm golden sky
-  const sky=ctx.createLinearGradient(0,0,0,H*0.6);
-  sky.addColorStop(0,'#4a5a8a'); sky.addColorStop(1,'#c8a850');
-  ctx.fillStyle=sky; ctx.fillRect(0,0,W,H*0.6);
-  drawCloud(ctx,W*0.15,H*0.09,W*0.1); drawCloud(ctx,W*0.7,H*0.12,W*0.08);
-
-  // Cobblestone plaza
-  const gr=ctx.createLinearGradient(0,H*0.58,0,H);
-  gr.addColorStop(0,'#8a7a5a'); gr.addColorStop(1,'#6a5a3a');
-  ctx.fillStyle=gr; ctx.fillRect(0,H*0.58,W,H*0.42);
-  ctx.strokeStyle='rgba(255,255,255,0.07)'; ctx.lineWidth=1;
-  for(let i=0;i<14;i++) for(let j=0;j<8;j++) ctx.strokeRect(i*W/14,H*0.6+j*H*0.05,W/14,H*0.05);
-
-  // Grand Place buildings — ornate guild houses
-  const drawGuildHouse=(x,w,h,baseH,col)=>{
-    ctx.fillStyle=col;
-    ctx.fillRect(x,baseH,w,H*0.6-baseH);
-    // Windows
-    ctx.fillStyle='#1a2a4a';
-    const wCols=Math.max(1,Math.floor(w/(W*0.04)));
-    const wGap=w/(wCols+1);
-    for(let r=0;r<3;r++) for(let c=1;c<=wCols;c++) ctx.fillRect(x+c*wGap-W*0.015,baseH+H*0.05+r*H*0.1,W*0.03,H*0.065);
-    // Ornate top / gable
-    ctx.fillStyle=col;
-    ctx.beginPath();
-    ctx.moveTo(x,baseH);
-    for(let i=0;i<=4;i++) { const bx2=x+i*w/4; ctx.lineTo(bx2,baseH-(i%2===0?H*0.06:H*0.03)); }
-    ctx.lineTo(x+w,baseH); ctx.closePath(); ctx.fill();
-    // Gold trim
-    ctx.strokeStyle='rgba(201,168,76,0.5)'; ctx.lineWidth=2;
-    ctx.strokeRect(x+2,baseH,w-4,H*0.6-baseH);
-  };
-
-  drawGuildHouse(W*0.02, W*0.16, H*0.45, H*0.14, '#c8a850');
-  drawGuildHouse(W*0.19, W*0.13, H*0.42, H*0.17, '#ddb870');
-  // Town Hall (center)
-  drawGuildHouse(W*0.33, W*0.34, H*0.48, H*0.1, '#d4b860');
-  // Tall center spire
-  ctx.fillStyle='#b8980a';
-  ctx.fillRect(W*0.47,H*0.05,W*0.06,H*0.07);
-  ctx.beginPath(); ctx.moveTo(W*0.47,H*0.05); ctx.lineTo(W*0.5,H*-0.01); ctx.lineTo(W*0.53,H*0.05); ctx.closePath(); ctx.fill();
-  drawGuildHouse(W*0.68, W*0.14, H*0.4, H*0.19, '#c8a850');
-  drawGuildHouse(W*0.83, W*0.15, H*0.38, H*0.21, '#b89840');
-
-  // Belgian flag
-  drawFlag(ctx,W*0.05,H*0.05,W*0.1,H*0.055,'be');
-}
-
-/* ── HELPER: clouds ── */
-function drawCloud(ctx, x, y, size, dark=false) {
-  ctx.fillStyle = dark ? 'rgba(180,190,200,0.7)' : 'rgba(255,255,255,0.82)';
-  [[0,0,1],[size*0.35,size*-0.1,0.75],[size*0.7,size*0.05,0.8],[size*-0.1,size*0.08,0.65]].forEach(([dx,dy,r])=>{
-    ctx.beginPath(); ctx.arc(x+dx,y+dy,size*r*0.38,0,Math.PI*2); ctx.fill();
-  });
-}
-
-/* ── HELPER: palm tree ── */
-function drawPalm(ctx, x, baseY, height) {
-  ctx.fillStyle='#6a4a2a'; ctx.fillRect(x-5,baseY-height,10,height);
-  ctx.fillStyle='#2a8a2a';
-  [[-30,-20],[-15,-30],[0,-35],[15,-30],[30,-20],[-25,-10],[25,-10]].forEach(([dx,dy])=>{
-    ctx.beginPath(); ctx.moveTo(x,baseY-height); ctx.quadraticCurveTo(x+dx*0.5,baseY-height+dy*0.5,x+dx,baseY-height+dy); ctx.lineWidth=6; ctx.strokeStyle='#2a8a2a'; ctx.stroke();
-  });
-}
-
-/* ── HELPER: flag ── */
-function drawFlag(ctx, x, y, w, h, country) {
-  ctx.save();
-  ctx.strokeStyle='rgba(0,0,0,0.2)'; ctx.lineWidth=1;
-  if(country==='ph'){
-    ctx.fillStyle='#0038a8'; ctx.fillRect(x,y,w,h/2);
-    ctx.fillStyle='#ce1126'; ctx.fillRect(x,y+h/2,w,h/2);
-    ctx.fillStyle='white'; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+w*0.35,y+h/2); ctx.lineTo(x,y+h); ctx.closePath(); ctx.fill();
-    ctx.fillStyle='#fcd116'; ctx.beginPath(); ctx.arc(x+w*0.16,y+h/2,h*0.2,0,Math.PI*2); ctx.fill();
-  } else if(country==='es'){
-    ctx.fillStyle='#c60b1e'; ctx.fillRect(x,y,w,h*0.25);
-    ctx.fillStyle='#ffc400'; ctx.fillRect(x,y+h*0.25,w,h*0.5);
-    ctx.fillStyle='#c60b1e'; ctx.fillRect(x,y+h*0.75,w,h*0.25);
-  } else if(country==='fr'){
-    ctx.fillStyle='#002395'; ctx.fillRect(x,y,w/3,h);
-    ctx.fillStyle='white'; ctx.fillRect(x+w/3,y,w/3,h);
-    ctx.fillStyle='#ED2939'; ctx.fillRect(x+2*w/3,y,w/3,h);
-  } else if(country==='de'){
-    ctx.fillStyle='#000000'; ctx.fillRect(x,y,w,h/3);
-    ctx.fillStyle='#DD0000'; ctx.fillRect(x,y+h/3,w,h/3);
-    ctx.fillStyle='#FFCE00'; ctx.fillRect(x,y+2*h/3,w,h/3);
-  } else if(country==='uk'){
-    ctx.fillStyle='#012169'; ctx.fillRect(x,y,w,h);
-    ctx.fillStyle='white';
-    ctx.fillRect(x+w*0.4,y,w*0.2,h); ctx.fillRect(x,y+h*0.35,w,h*0.3);
-    ctx.fillStyle='#C8102E';
-    ctx.fillRect(x+w*0.45,y,w*0.1,h); ctx.fillRect(x,y+h*0.4,w,h*0.2);
-  } else if(country==='be'){
-    ctx.fillStyle='#000000'; ctx.fillRect(x,y,w/3,h);
-    ctx.fillStyle='#FAE042'; ctx.fillRect(x+w/3,y,w/3,h);
-    ctx.fillStyle='#EF3340'; ctx.fillRect(x+2*w/3,y,w/3,h);
-  }
-  ctx.strokeRect(x,y,w,h);
-  ctx.restore();
-}
-
-/* ══════════════════════════════════════════
-   TAKE PHOTO
-══════════════════════════════════════════ */
 function takePhoto() {
   if (!cameraStarted) return;
-
-  // Flash effect
   const flash = document.createElement('div');
   flash.style.cssText = 'position:fixed;inset:0;background:white;z-index:999;opacity:0;transition:opacity 0.1s;pointer-events:none';
   document.body.appendChild(flash);
-  setTimeout(()=>flash.style.opacity='0.9',10);
-  setTimeout(()=>{ flash.style.opacity='0'; setTimeout(()=>flash.remove(),300); }, 150);
+  setTimeout(() => flash.style.opacity = '0.9', 10);
+  setTimeout(() => { flash.style.opacity = '0'; setTimeout(() => flash.remove(), 300); }, 150);
 
-  // Capture current canvas state
   photoDataURL = canvas.toDataURL('image/jpeg', 0.95);
-
-  // Show result
   const c = COUNTRIES[selectedCountry];
   document.getElementById('result-img').src = photoDataURL;
   document.getElementById('result-location-text').textContent = 'At ' + c.landmark;
@@ -1344,12 +720,8 @@ function takePhoto() {
   document.getElementById('btn-download').classList.add('show');
 }
 
-/* ══════════════════════════════════════════
-   DOWNLOAD
-══════════════════════════════════════════ */
 function downloadPhoto() {
   if (!photoDataURL) return;
-  const c = COUNTRIES[selectedCountry];
   const a = document.createElement('a');
   a.href = photoDataURL;
   a.download = `rizals-footsteps-${selectedCountry}-${Date.now()}.jpg`;
@@ -1360,27 +732,23 @@ function closeResult() {
   document.getElementById('result-modal').classList.remove('open');
 }
 
-/* ══════════════════════════════════════════
-   STOP CAMERA
-══════════════════════════════════════════ */
 function stopCamera() {
-  if (mpCamera) { mpCamera.stop(); mpCamera = null; }
-  if (videoStream) { videoStream.getTracks().forEach(t=>t.stop()); videoStream = null; }
-  if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+  if (mpCamera)      { mpCamera.stop(); mpCamera = null; }
+  if (videoStream)   { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; }
+  if (animFrame)     { cancelAnimationFrame(animFrame); animFrame = null; }
+  if (segmentation)  { segmentation = null; }
   cameraStarted = false;
   placeholder.style.display = 'flex';
   document.getElementById('location-label').style.display = 'none';
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  document.getElementById('btn-camera').textContent = '📷 Start Camera';
-  document.getElementById('btn-camera').onclick = startCamera;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const btn = document.getElementById('btn-camera');
+  btn.textContent = '📷 Start Camera';
+  btn.onclick = startCamera;
   document.getElementById('btn-snap').disabled = true;
   document.getElementById('btn-download').classList.remove('show');
 }
 
-/* ══════════════════════════════════════════
-   STATUS HELPERS
-══════════════════════════════════════════ */
-function showStatus(msg) { statusBar.textContent=msg; statusBar.classList.add('show'); }
+function showStatus(msg) { statusBar.textContent = msg; statusBar.classList.add('show'); }
 function hideStatus()    { statusBar.classList.remove('show'); }
 </script>
 </body>

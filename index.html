@@ -562,11 +562,30 @@ function selectCountry(btn) {
   btn.classList.add('active');
   selectedCountry = btn.dataset.country;
   document.getElementById('location-label').textContent = '📍 ' + COUNTRIES[selectedCountry].landmark;
-  loadBgImage(selectedCountry).then(img => { currentBgImage = img; });
+  loadBgImage(selectedCountry).then(img => {
+    currentBgImage = img;
+    if (!cameraStarted) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBackground(canvas.width, canvas.height);
+      drawRizal(canvas.width, canvas.height);
+    }
+  });
 }
 
 document.querySelector('.country-btn').classList.add('active');
-loadBgImage('philippines').then(img => { currentBgImage = img; });
+
+canvas.width  = 640;
+canvas.height = 480;
+document.getElementById('placeholder').style.display = 'none';
+document.getElementById('outputCanvas').style.display = 'block';
+
+loadBgImage('philippines').then(img => {
+  currentBgImage = img;
+  drawPreviewLoop();
+});
+
+rizalImg.onload = () => {};
+rizalImg.onerror = () => {};
 
 async function startCamera() {
   if (!selectedCountry) { alert('Please choose a destination first!'); return; }
@@ -657,8 +676,13 @@ function onSegmentationResults(results) {
   const H = canvas.height = results.image.height;
 
   ctx.clearRect(0, 0, W, H);
-
   drawBackground(W, H);
+
+  const maskCanvas = document.createElement('canvas');
+  maskCanvas.width = W; maskCanvas.height = H;
+  const mCtx = maskCanvas.getContext('2d');
+  mCtx.drawImage(results.segmentationMask, 0, 0, W, H);
+  const maskData = mCtx.getImageData(0, 0, W, H);
 
   const personCanvas = document.createElement('canvas');
   personCanvas.width = W; personCanvas.height = H;
@@ -668,12 +692,15 @@ function onSegmentationResults(results) {
   pCtx.translate(-W, 0);
   pCtx.drawImage(results.image, 0, 0, W, H);
   pCtx.restore();
-  pCtx.globalCompositeOperation = 'destination-in';
-  pCtx.drawImage(results.segmentationMask, 0, 0, W, H);
+
+  const personData = pCtx.getImageData(0, 0, W, H);
+  for (let i = 0; i < maskData.data.length; i += 4) {
+    personData.data[i + 3] = maskData.data[i];
+  }
+  pCtx.putImageData(personData, 0, 0);
 
   ctx.globalCompositeOperation = 'source-over';
   ctx.drawImage(personCanvas, 0, 0);
-
   ctx.globalCompositeOperation = 'source-over';
   drawRizal(W, H);
 
@@ -685,22 +712,45 @@ function onSegmentationResults(results) {
 }
 
 function drawBackground(W, H) {
-  if (currentBgImage) {
+  if (currentBgImage && currentBgImage.naturalWidth > 0) {
     ctx.drawImage(currentBgImage, 0, 0, W, H);
   } else {
-    ctx.fillStyle = '#87CEEB';
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, '#87CEEB');
+    grad.addColorStop(1, '#e8f4e8');
+    ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '14px Lora, serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Place images/philippines.png (or selected country) in your images/ folder', W/2, H/2);
   }
 }
 
 function drawRizal(W, H) {
-  if (!rizalImg.complete || rizalImg.naturalWidth === 0) return;
+  if (!rizalImg.complete || rizalImg.naturalWidth === 0) {
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '13px Lora, serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Place images/rizal.png in your images/ folder', W/2, H - 20);
+    return;
+  }
   const rizalH = H * 0.88;
   const aspectRatio = rizalImg.naturalWidth / rizalImg.naturalHeight;
   const rizalW = rizalH * aspectRatio;
   const x = W * 0.68;
   const y = H - rizalH;
   ctx.drawImage(rizalImg, x, y, rizalW, rizalH);
+}
+
+function drawPreviewLoop() {
+  if (cameraStarted) return;
+  const W = canvas.width  || 640;
+  const H = canvas.height || 480;
+  ctx.clearRect(0, 0, W, H);
+  drawBackground(W, H);
+  drawRizal(W, H);
+  requestAnimationFrame(drawPreviewLoop);
 }
 
 function takePhoto() {

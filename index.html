@@ -140,9 +140,10 @@ html, body {
 }
 
 #outputCanvas {
+  position: absolute;
+  top: 0; left: 0;
   width: 100%; height: 100%;
   display: block;
-  object-fit: cover;
 }
 
 .rizal-layer {
@@ -576,16 +577,19 @@ document.querySelector('.country-btn').classList.add('active');
 
 canvas.width  = 640;
 canvas.height = 480;
-document.getElementById('placeholder').style.display = 'none';
-document.getElementById('outputCanvas').style.display = 'block';
+
+function startPreview() {
+  document.getElementById('placeholder').style.display = 'none';
+  drawPreviewLoop();
+}
+
+rizalImg.onload  = () => { if (!cameraStarted) { ctx.clearRect(0,0,canvas.width,canvas.height); drawBackground(canvas.width,canvas.height); drawRizal(canvas.width,canvas.height); } };
+rizalImg.onerror = () => {};
 
 loadBgImage('philippines').then(img => {
   currentBgImage = img;
-  drawPreviewLoop();
+  startPreview();
 });
-
-rizalImg.onload = () => {};
-rizalImg.onerror = () => {};
 
 async function startCamera() {
   if (!selectedCountry) { alert('Please choose a destination first!'); return; }
@@ -748,6 +752,8 @@ function drawPreviewLoop() {
   const W = canvas.width  || 640;
   const H = canvas.height || 480;
   ctx.clearRect(0, 0, W, H);
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = 'source-over';
   drawBackground(W, H);
   drawRizal(W, H);
   requestAnimationFrame(drawPreviewLoop);
@@ -788,9 +794,10 @@ function stopCamera() {
   if (animFrame)     { cancelAnimationFrame(animFrame); animFrame = null; }
   if (segmentation)  { segmentation = null; }
   cameraStarted = false;
-  placeholder.style.display = 'flex';
-  document.getElementById('location-label').style.display = 'none';
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = 'source-over';
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawPreviewLoop();
   const btn = document.getElementById('btn-camera');
   btn.textContent = '📷 Start Camera';
   btn.onclick = startCamera;

@@ -4,360 +4,153 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Rizal's Footsteps — Photo Booth</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-
 <style>
 :root {
-  --cream:  #f5ede0;
-  --cream2: #ede0cc;
-  --gold:   #c9a84c;
-  --dark:   #1a1008;
-  --red:    #c0392b;
-  --text:   #1a1008;
+  --ink:   #0f0d0a;
+  --parch: #f2e8d5;
+  --gold:  #b8973a;
+  --gold2: #d4af50;
 }
-
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body {
-  width:100%; height:100%; min-height:100vh;
-  background: var(--cream);
-  font-family: 'Lora', serif;
-  color: var(--text);
+  min-height: 100vh;
+  background: var(--ink);
+  font-family: 'Crimson Pro', Georgia, serif;
+  color: var(--parch);
   overflow-x: hidden;
 }
-
-.header {
-  text-align: center;
-  padding: 28px 20px 16px;
-  background: var(--cream);
-  border-bottom: 1px solid rgba(201,168,76,0.25);
-  position: relative;
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(184,151,58,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(139,58,42,0.1) 0%, transparent 60%),
+    linear-gradient(160deg, #1a1410 0%, #0f0d0a 50%, #141008 100%);
+  pointer-events: none;
 }
+.wrap { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 0 16px 48px; }
+.header { text-align: center; padding: 40px 20px 28px; }
+.header-rule { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.header-rule::before, .header-rule::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184,151,58,0.5), transparent);
+}
+.header-diamond { width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
 .header-eyebrow {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: clamp(0.5rem, 1.5vw, 0.65rem);
-  letter-spacing: 0.35em;
-  color: var(--gold);
-  text-transform: uppercase;
-  margin-bottom: 6px;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.48rem, 1.2vw, 0.6rem);
+  letter-spacing: 0.5em; color: var(--gold);
+  margin-bottom: 10px; opacity: 0.8;
 }
 .header-title {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: clamp(1.3rem, 4vw, 2.2rem);
-  color: var(--dark);
-  font-weight: 700;
-  margin-bottom: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 700; color: var(--parch);
+  letter-spacing: 0.06em; line-height: 1.1; margin-bottom: 10px;
 }
+.header-title span { color: var(--gold2); }
 .header-sub {
-  font-family: 'Playfair Display', serif;
   font-style: italic;
-  font-size: clamp(0.82rem, 2vw, 1rem);
-  color: rgba(26,16,8,0.6);
-}
-
-.country-section {
-  padding: 24px 20px 10px;
-  text-align: center;
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  color: rgba(242,232,213,0.5); font-weight: 300;
 }
 .section-label {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: clamp(0.55rem, 1.4vw, 0.7rem);
-  letter-spacing: 0.28em;
-  color: var(--gold);
-  margin-bottom: 14px;
-  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.5rem, 1.2vw, 0.58rem);
+  letter-spacing: 0.4em; color: var(--gold); opacity: 0.7;
+  display: block; text-align: center; margin-bottom: 16px;
 }
-.country-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  max-width: 700px;
-  margin: 0 auto;
-}
+.country-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 28px; }
 .country-btn {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 5px;
-  padding: 12px 16px;
-  border: 1.5px solid rgba(201,168,76,0.35);
-  background: white;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  font-family: 'Lora', serif;
-  min-width: 100px;
-  border-radius: 2px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(184,151,58,0.2);
+  cursor: pointer; transition: all 0.2s ease;
+  font-family: 'Crimson Pro', serif;
+  min-width: 96px; border-radius: 3px; color: var(--parch);
 }
-.country-btn:hover {
-  border-color: var(--gold);
-  background: rgba(201,168,76,0.08);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(201,168,76,0.2);
-}
+.country-btn:hover { border-color: rgba(184,151,58,0.6); background: rgba(184,151,58,0.08); transform: translateY(-2px); }
 .country-btn.active {
-  border-color: var(--gold);
-  background: rgba(201,168,76,0.15);
-  box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+  border-color: var(--gold); background: rgba(184,151,58,0.14);
+  box-shadow: 0 0 20px rgba(184,151,58,0.15), inset 0 0 20px rgba(184,151,58,0.05);
 }
-.country-flag { font-size: 1.8rem; }
-.country-name {
-  font-size: clamp(0.7rem, 1.5vw, 0.82rem);
-  font-weight: 600;
-  color: var(--dark);
-}
-.country-landmark {
-  font-size: clamp(0.58rem, 1.2vw, 0.68rem);
-  font-style: italic;
-  color: rgba(26,16,8,0.5);
-}
-
-.booth-area {
-  padding: 20px;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
+.country-flag { font-size: 1.6rem; }
+.country-name { font-family: 'Cinzel', serif; font-size: clamp(0.55rem, 1.2vw, 0.65rem); font-weight: 600; letter-spacing: 0.08em; }
+.country-landmark { font-size: clamp(0.62rem, 1.3vw, 0.72rem); font-style: italic; color: rgba(242,232,213,0.4); }
 .preview-wrap {
-  position: relative;
-  width: 100%;
-  max-width: 640px;
-  margin: 0 auto 16px;
-  border: 2px solid rgba(201,168,76,0.4);
-  background: #1a1008;
-  overflow: hidden;
-  border-radius: 2px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
-  aspect-ratio: 4/3;
+  position: relative; width: 100%; aspect-ratio: 4/3;
+  background: #080604; overflow: hidden; border-radius: 4px;
+  border: 1px solid rgba(184,151,58,0.25);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.5), 0 20px 60px rgba(0,0,0,0.6), inset 0 0 80px rgba(0,0,0,0.3);
+  margin-bottom: 20px;
 }
-
-#inputVideo {
-  position: absolute;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  pointer-events: none;
-}
-
-#outputCanvas {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: block;
-}
-
-.rizal-layer {
-  position: absolute;
-  bottom: 0; right: 8%;
-  height: 88%;
-  pointer-events: none;
-  z-index: 3;
-  filter: drop-shadow(2px 2px 8px rgba(0,0,0,0.4));
-  display: none; 
-}
-
+#inputVideo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; pointer-events: none; }
+#outputCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
 .status-bar {
-  position: absolute;
-  top: 12px; left: 50%; transform: translateX(-50%);
-  z-index: 10;
-  background: rgba(26,16,8,0.82);
-  color: var(--cream);
-  font-family: 'Lora', serif;
-  font-size: 0.75rem;
-  font-style: italic;
-  padding: 5px 16px;
-  border-radius: 20px;
-  white-space: nowrap;
-  display: none;
+  position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+  z-index: 10; background: rgba(10,8,4,0.85); color: rgba(242,232,213,0.8);
+  font-style: italic; font-size: 0.85rem;
+  padding: 6px 18px; border-radius: 20px;
+  border: 1px solid rgba(184,151,58,0.2);
+  white-space: nowrap; display: none; backdrop-filter: blur(8px);
 }
 .status-bar.show { display: block; }
-
-.controls {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 12px;
-  margin-top: 4px;
+.controls { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.btn {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.55rem, 1.3vw, 0.65rem);
+  letter-spacing: 0.2em; padding: 13px 28px;
+  border: none; cursor: pointer; transition: all 0.25s ease; border-radius: 3px; white-space: nowrap;
 }
-
-.btn-primary {
-  padding: 13px 36px;
-  background: var(--dark);
-  color: var(--cream);
-  border: none;
-  font-family: 'Cinzel Decorative', serif;
-  font-size: clamp(0.6rem, 1.5vw, 0.72rem);
-  letter-spacing: 0.22em;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 2px;
-}
-.btn-primary:hover {
-  background: #2e1f0e;
-  box-shadow: 0 4px 20px rgba(26,16,8,0.3);
-  transform: translateY(-1px);
-}
-.btn-primary:disabled {
-  opacity: 0.4; cursor: not-allowed; transform: none;
-}
-
-.btn-secondary {
-  padding: 10px 28px;
-  background: transparent;
-  color: var(--dark);
-  border: 1.5px solid rgba(26,16,8,0.35);
-  font-family: 'Cinzel Decorative', serif;
-  font-size: clamp(0.58rem, 1.3vw, 0.68rem);
-  letter-spacing: 0.18em;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 2px;
-}
-.btn-secondary:hover {
-  border-color: var(--dark);
-  background: rgba(26,16,8,0.06);
-}
-.btn-secondary:disabled { opacity: 0.35; cursor: not-allowed; }
-
-.btn-gold {
-  padding: 13px 36px;
-  background: var(--gold);
-  color: var(--dark);
-  border: none;
-  font-family: 'Cinzel Decorative', serif;
-  font-size: clamp(0.6rem, 1.5vw, 0.72rem);
-  letter-spacing: 0.22em;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 2px;
-  display: none;
-}
-.btn-gold:hover {
-  background: #b8960a;
-  box-shadow: 0 4px 20px rgba(201,168,76,0.4);
-  transform: translateY(-1px);
-}
-.btn-gold.show { display: inline-block; }
-
-.btn-row {
-  display: flex; gap: 10px; flex-wrap: wrap;
-  justify-content: center;
-}
-
-.instructions {
-  max-width: 600px;
-  margin: 24px auto 0;
-  padding: 18px 22px;
-  border: 1px solid rgba(201,168,76,0.25);
-  background: rgba(255,255,255,0.5);
-}
-.instructions-title {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.58rem;
-  letter-spacing: 0.25em;
-  color: var(--gold);
-  margin-bottom: 10px;
-}
-.instructions ol {
-  padding-left: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.instructions li {
-  font-size: clamp(0.78rem, 1.6vw, 0.9rem);
-  line-height: 1.6;
-  color: rgba(26,16,8,0.75);
-}
-.instructions li strong { color: var(--dark); }
-
+.btn-start { background: linear-gradient(135deg, #1e1a14, #2a2318); color: var(--parch); border: 1px solid rgba(184,151,58,0.4); }
+.btn-start:hover { border-color: var(--gold); box-shadow: 0 4px 20px rgba(184,151,58,0.2); transform: translateY(-1px); }
+.btn-start:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+.btn-snap { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: var(--ink); font-weight: 600; }
+.btn-snap:hover { box-shadow: 0 4px 24px rgba(184,151,58,0.4); transform: translateY(-1px); }
+.btn-snap:disabled { opacity: 0.25; cursor: not-allowed; transform: none; }
+.btn-download { background: transparent; color: var(--gold); border: 1px solid rgba(184,151,58,0.35); display: none; }
+.btn-download:hover { border-color: var(--gold); background: rgba(184,151,58,0.08); }
+.btn-download.show { display: inline-block; }
+.tip { text-align: center; font-style: italic; font-size: clamp(0.78rem, 1.6vw, 0.9rem); color: rgba(242,232,213,0.25); margin-top: 4px; }
 #result-modal {
   position: fixed; inset: 0; z-index: 200;
-  background: rgba(10,8,4,0.88);
-  backdrop-filter: blur(6px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 20px;
-  opacity: 0; visibility: hidden;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+  background: rgba(5,4,2,0.92); backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; visibility: hidden; transition: opacity 0.35s ease, visibility 0.35s ease;
 }
 #result-modal.open { opacity: 1; visibility: visible; }
-
 .result-box {
-  background: var(--cream);
-  border: 1px solid rgba(201,168,76,0.4);
-  max-width: 520px; width: 100%;
-  padding: 28px 24px;
-  text-align: center;
-  transform: translateY(16px);
+  background: linear-gradient(160deg, #1a1610, #111009);
+  border: 1px solid rgba(184,151,58,0.3);
+  max-width: 500px; width: 100%; padding: 28px 24px; text-align: center;
+  transform: translateY(20px) scale(0.97);
   transition: transform 0.4s cubic-bezier(0.23,1,0.32,1);
+  border-radius: 4px; box-shadow: 0 30px 80px rgba(0,0,0,0.7);
 }
-#result-modal.open .result-box { transform: translateY(0); }
-
-.result-title {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-  color: var(--dark);
-  margin-bottom: 4px;
-}
-.result-sub {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: 0.88rem;
-  color: rgba(26,16,8,0.55);
-  margin-bottom: 16px;
-}
-#result-img {
-  width: 100%; border: 1px solid rgba(201,168,76,0.3);
-  margin-bottom: 16px;
-  display: block;
-}
-.result-actions {
-  display: flex; gap: 10px;
-  justify-content: center; flex-wrap: wrap;
-}
-.result-location-badge {
-  display: inline-block;
-  margin-bottom: 12px;
-  padding: 4px 14px;
-  border: 1px solid rgba(201,168,76,0.4);
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 0.58rem;
-  letter-spacing: 0.2em;
-  color: var(--gold);
-}
-
-.footer {
-  text-align: center;
-  padding: 24px 20px;
-  margin-top: 30px;
-  border-top: 1px solid rgba(201,168,76,0.2);
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: 0.8rem;
-  color: rgba(26,16,8,0.4);
-}
-
-@media (max-width: 500px) {
-  .country-btn { min-width: 80px; padding: 10px 10px; }
-  .booth-area { padding: 14px; }
-}
-
-@keyframes shimmer {
-  0%   { opacity: 0.4; }
-  50%  { opacity: 1; }
-  100% { opacity: 0.4; }
-}
-.loading { animation: shimmer 1.2s ease-in-out infinite; }
+#result-modal.open .result-box { transform: translateY(0) scale(1); }
+.result-title { font-family: 'Cinzel', serif; font-size: clamp(0.9rem, 2.5vw, 1.15rem); color: var(--gold2); letter-spacing: 0.1em; margin-bottom: 4px; }
+.result-sub { font-style: italic; font-size: 0.95rem; color: rgba(242,232,213,0.45); margin-bottom: 6px; }
+.result-badge { display: inline-block; margin-bottom: 16px; padding: 3px 12px; border: 1px solid rgba(184,151,58,0.3); font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.25em; color: var(--gold); }
+#result-img { width: 100%; border-radius: 3px; border: 1px solid rgba(184,151,58,0.2); margin-bottom: 18px; display: block; }
+.result-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.footer { text-align: center; padding: 32px 20px 20px; font-style: italic; font-size: 0.8rem; color: rgba(242,232,213,0.18); }
+@media (max-width: 480px) { .country-btn { min-width: 80px; padding: 10px 10px; } .btn { padding: 12px 20px; } }
 </style>
 </head>
 <body>
+<div class="wrap">
+  <div class="header">
+    <div class="header-rule"><div class="header-diamond"></div></div>
+    <div class="header-eyebrow">Interactive Heritage Experience</div>
+    <div class="header-title">Rizal's <span>Footsteps</span></div>
+    <div class="header-sub">Step into history and take a photo with José Rizal!</div>
+  </div>
 
-<div class="header">
-  <div class="header-eyebrow">Interactive Experience</div>
-  <div class="header-title">Rizal's Footsteps</div>
-  <div class="header-sub">Take a photo with José Rizal at his historic destinations</div>
-</div>
-
-<div class="country-section">
-  <span class="section-label">Choose your destination</span>
+  <span class="section-label">Choose a destination</span>
   <div class="country-grid">
     <button class="country-btn" data-country="philippines" onclick="selectCountry(this)">
       <span class="country-flag">🇵🇭</span>
@@ -390,94 +183,49 @@ html, body {
       <span class="country-landmark">Bruges</span>
     </button>
   </div>
-</div>
 
-<div class="booth-area">
-  <div class="preview-wrap" id="preview-wrap">
-
-    
+  <div class="preview-wrap">
     <video id="inputVideo" playsinline autoplay muted></video>
-
-    
     <canvas id="outputCanvas"></canvas>
-
-    
-    <img id="rizalImg" style="display:none" alt="Rizal">
-
-    
-    <img id="bgImg" style="display:none" alt="Background">
-
-    
-    
-    
-    
-    
-    
-
-    
-    
-
-    
-    <div class="status-bar" id="status-bar">Loading AI segmentation...</div>
-
-    
-    
-      
-    </div>
+    <div class="status-bar" id="status-bar">Loading…</div>
   </div>
 
-  
   <div class="controls">
-    <div class="btn-row">
-      <button class="btn-primary" id="btn-camera" onclick="startCamera()">📷 Start Camera</button>
-      <button class="btn-secondary" id="btn-snap" onclick="takePhoto()" disabled>✨ Take Photo</button>
-    </div>
-    <button class="btn-gold" id="btn-download" onclick="downloadPhoto()">⬇️ Download Photo</button>
+    <button class="btn btn-start" id="btn-camera" onclick="startCamera()">📷 Start Camera</button>
+    <button class="btn btn-snap"  id="btn-snap"   onclick="takePhoto()" disabled>✦ Take Photo</button>
+    <button class="btn btn-download" id="btn-download" onclick="downloadPhoto()">↓ Download</button>
   </div>
-
-  
-  <div class="instructions">
-    <div class="instructions-title">How to use</div>
-    <ol>
-      <li><strong>Choose a country</strong> — each has a unique landmark background</li>
-      <li><strong>Start Camera</strong> — allow camera access when prompted</li>
-      <li><strong>Position yourself</strong> — stand back so your full body is visible</li>
-      <li><strong>Take Photo</strong> — your background will be replaced with the landmark, and Rizal will appear beside you</li>
-      <li><strong>Download</strong> and share on social media!</li>
-    </ol>
-  </div>
+  <div class="tip">Stand back so your full body is visible · Rizal will appear beside you</div>
 </div>
 
 <div id="result-modal" onclick="if(event.target===this)closeResult()">
   <div class="result-box">
-    <div class="result-title">Your Photo with Rizal!</div>
-    <div class="result-sub" id="result-location-text">At Rizal Park, Manila</div>
-    <div class="result-location-badge" id="result-badge">📍 Philippines</div>
+    <div class="result-title">Your Photo with Rizal</div>
+    <div class="result-sub" id="result-location-text"></div>
+    <div class="result-badge" id="result-badge"></div>
     <img id="result-img" alt="Your photo with Rizal">
     <div class="result-actions">
-      <button class="btn-primary" onclick="downloadPhoto()">⬇️ Download</button>
-      <button class="btn-secondary" onclick="closeResult()">Take Another</button>
+      <button class="btn btn-snap" onclick="downloadPhoto()">↓ Download</button>
+      <button class="btn btn-start" onclick="closeResult()">Take Another</button>
     </div>
   </div>
 </div>
 
-<div class="footer">
-  Rizal's Footsteps &nbsp;·&nbsp; An Interactive Heritage Experience
-</div>
+<div class="footer">Rizal's Footsteps · An Interactive Heritage Experience</div>
 
 <script>
 const COUNTRIES = {
-  philippines: { name: 'Philippines',    landmark: 'Rizal Park',          flag: '🇵🇭', bg: 'images/philippines.jpg' },
-  spain:       { name: 'Spain',          landmark: 'Catedral de Burgos',       flag: '🇪🇸', bg: 'images/spain.png'       },
-  france:      { name: 'France',         landmark: 'Eiffel Tower',          flag: '🇫🇷', bg: 'images/france.jpg'      },
-  germany:     { name: 'Germany',        landmark: 'Berlin Catedral',     flag: '🇩🇪', bg: 'images/germany.png'     },
-  uk:          { name: 'United Kingdom', landmark: 'London Bridge',         flag: '🇬🇧', bg: 'images/uk.png'          },
-  belgium:     { name: 'Belgium',        landmark: 'Bruges',           flag: '🇧🇪', bg: 'images/belgium.png'     }
+  philippines: { name: 'Philippines',    landmark: 'Rizal Park',         flag: '🇵🇭', bg: 'images/philippines.jpg' },
+  spain:       { name: 'Spain',          landmark: 'Catedral de Burgos', flag: '🇪🇸', bg: 'images/spain.png'       },
+  france:      { name: 'France',         landmark: 'Eiffel Tower',       flag: '🇫🇷', bg: 'images/france.jpg'      },
+  germany:     { name: 'Germany',        landmark: 'Berlin Catedral',    flag: '🇩🇪', bg: 'images/germany.png'     },
+  uk:          { name: 'United Kingdom', landmark: 'London Bridge',      flag: '🇬🇧', bg: 'images/uk.png'          },
+  belgium:     { name: 'Belgium',        landmark: 'Bruges',             flag: '🇧🇪', bg: 'images/belgium.png'     }
 };
 
-const bgImageCache = {};
+const bgCache  = {};
 const rizalImg = new Image();
-rizalImg.src = 'images/rizal.png';
+rizalImg.src   = 'images/rizal.png';
 
 let selectedCountry = 'philippines';
 let cameraStarted   = false;
@@ -488,18 +236,18 @@ let photoDataURL    = null;
 let mpCamera        = null;
 let currentBgImage  = null;
 
-const video       = document.getElementById('inputVideo');
-const canvas      = document.getElementById('outputCanvas');
-const ctx         = canvas.getContext('2d');
-const statusBar   = document.getElementById('status-bar');
+const video     = document.getElementById('inputVideo');
+const canvas    = document.getElementById('outputCanvas');
+const ctx       = canvas.getContext('2d');
+const statusBar = document.getElementById('status-bar');
 
-function loadBgImage(country) {
-  return new Promise((resolve) => {
-    if (bgImageCache[country]) { resolve(bgImageCache[country]); return; }
+function loadBg(country) {
+  return new Promise(resolve => {
+    if (bgCache[country]) { resolve(bgCache[country]); return; }
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.onload  = () => { bgImageCache[country] = img; resolve(img); };
-    img.onerror = () => { resolve(null); };
+    img.onload  = () => { bgCache[country] = img; resolve(img); };
+    img.onerror = () => resolve(null);
     img.src = COUNTRIES[country].bg;
   });
 }
@@ -508,247 +256,195 @@ function selectCountry(btn) {
   document.querySelectorAll('.country-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   selectedCountry = btn.dataset.country;
-  
-  loadBgImage(selectedCountry).then(img => {
+  loadBg(selectedCountry).then(img => {
     currentBgImage = img;
-    if (!cameraStarted) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawBackground(canvas.width, canvas.height);
-      drawRizal(canvas.width, canvas.height);
-    }
+    if (!cameraStarted) redrawPreview();
   });
 }
 
-document.querySelector('.country-btn').classList.add('active');
+function redrawPreview() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = 'source-over';
+  drawBg(canvas.width, canvas.height);
+  drawRizal(canvas.width, canvas.height);
+}
+
+function previewLoop() {
+  if (cameraStarted) return;
+  redrawPreview();
+  requestAnimationFrame(previewLoop);
+}
 
 canvas.width  = 640;
 canvas.height = 480;
+rizalImg.onload = () => { if (!cameraStarted) redrawPreview(); };
+loadBg('philippines').then(img => { currentBgImage = img; previewLoop(); });
+document.querySelector('.country-btn').classList.add('active');
 
-function startPreview() {
-  
-  drawPreviewLoop();
+const urlParams    = new URLSearchParams(window.location.search);
+const countryParam = urlParams.get('country');
+if (countryParam && COUNTRIES[countryParam]) {
+  const targetBtn = document.querySelector(`[data-country="${countryParam}"]`);
+  if (targetBtn) selectCountry(targetBtn);
 }
 
-rizalImg.onload  = () => { if (!cameraStarted) { ctx.clearRect(0,0,canvas.width,canvas.height); drawBackground(canvas.width,canvas.height); drawRizal(canvas.width,canvas.height); } };
-rizalImg.onerror = () => {};
-
-loadBgImage('philippines').then(img => {
-  currentBgImage = img;
-  startPreview();
-});
-
 async function startCamera() {
-  if (!selectedCountry) { alert('Please choose a destination first!'); return; }
   const btn = document.getElementById('btn-camera');
-  btn.disabled = true;
-  btn.textContent = 'Starting...';
-  showStatus('Requesting camera access...');
-
+  btn.disabled = true; btn.textContent = 'Starting…';
+  showStatus('Requesting camera…');
   try {
     videoStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+      video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
       audio: false
     });
     video.srcObject = videoStream;
     await video.play();
     canvas.width  = video.videoWidth  || 640;
     canvas.height = video.videoHeight || 480;
-
-    
-    
-    showStatus('Loading AI background removal...');
-
+    showStatus('Loading AI segmentation…');
     segmentation = new SelfieSegmentation({
-      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`
+      locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${f}`
     });
-    segmentation.setOptions({ modelSelection: 1 });
-    segmentation.onResults(onSegmentationResults);
-
+    segmentation.setOptions({ modelSelection: 1, selfieMode: false });
+    segmentation.onResults(onResults);
     mpCamera = new Camera(video, {
       onFrame: async () => { await segmentation.send({ image: video }); },
-      width: canvas.width,
-      height: canvas.height
+      width: canvas.width, height: canvas.height
     });
     await mpCamera.start();
-
     cameraStarted = true;
-    btn.textContent = '⏹ Stop Camera';
-    btn.disabled = false;
-    btn.onclick = () => stopCamera();
+    btn.textContent = '⏹ Stop'; btn.disabled = false; btn.onclick = stopCamera;
     document.getElementById('btn-snap').disabled = false;
     hideStatus();
-
   } catch (err) {
     console.error(err);
-    btn.disabled = false;
-    btn.textContent = '📷 Start Camera';
+    btn.disabled = false; btn.textContent = '📷 Start Camera'; btn.onclick = startCamera;
     hideStatus();
-    if (err.name === 'NotAllowedError') {
-      alert('Camera access was denied. Please allow camera access in your browser settings.');
-    } else {
-      startFallbackMode();
-    }
+    if (err.name === 'NotAllowedError') alert('Camera access denied. Please allow camera access and try again.');
+    else startFallback();
   }
 }
 
-function startFallbackMode() {
-  
-  
+function startFallback() {
   cameraStarted = true;
-  document.getElementById('btn-camera').textContent = '⏹ Stop Camera';
-  document.getElementById('btn-camera').disabled = false;
-  document.getElementById('btn-camera').onclick = () => stopCamera();
+  const btn = document.getElementById('btn-camera');
+  btn.textContent = '⏹ Stop'; btn.disabled = false; btn.onclick = stopCamera;
   document.getElementById('btn-snap').disabled = false;
-  showStatus('Basic mode — no background removal');
-  setTimeout(hideStatus, 3000);
-  drawFallbackLoop();
+  showStatus('Basic mode — no background removal'); setTimeout(hideStatus, 3000);
+  fallbackLoop();
 }
 
-function drawFallbackLoop() {
+function fallbackLoop() {
   if (!cameraStarted) return;
-  const W = canvas.width  = video.videoWidth  || 640;
-  const H = canvas.height = video.videoHeight || 480;
+  canvas.width  = video.videoWidth  || 640;
+  canvas.height = video.videoHeight || 480;
+  const W = canvas.width, H = canvas.height;
   ctx.clearRect(0, 0, W, H);
-  drawBackground(W, H);
-  ctx.save();
-  ctx.globalAlpha = 0.9;
-  ctx.scale(-1, 1);
-  ctx.translate(-W, 0);
-  ctx.drawImage(video, 0, 0, W, H);
-  ctx.restore();
-  ctx.globalAlpha = 1;
+  ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  drawBg(W, H);
+  ctx.save(); ctx.scale(-1,1); ctx.translate(-W,0); ctx.drawImage(video, 0, 0, W, H); ctx.restore();
   drawRizal(W, H);
-  animFrame = requestAnimationFrame(drawFallbackLoop);
+  animFrame = requestAnimationFrame(fallbackLoop);
 }
 
-function onSegmentationResults(results) {
+function onResults(results) {
   const W = canvas.width  = results.image.width;
   const H = canvas.height = results.image.height;
 
-  // Draw the raw camera frame (unmirrored) and mask onto separate canvases
-  const rawCanvas = document.createElement('canvas');
-  rawCanvas.width = W; rawCanvas.height = H;
-  const rCtx = rawCanvas.getContext('2d');
+  // Raw unmirrored camera frame
+  const rawC = document.createElement('canvas');
+  rawC.width = W; rawC.height = H;
+  const rCtx = rawC.getContext('2d');
   rCtx.drawImage(results.image, 0, 0, W, H);
 
-  // Draw mask to offscreen canvas at DOUBLE size, blur, then scale back down
-  // This gives much smoother edges than blurring at native resolution
-  const scale = 2;
-  const maskCanvas = document.createElement('canvas');
-  maskCanvas.width = W * scale; maskCanvas.height = H * scale;
-  const mCtx = maskCanvas.getContext('2d');
-  mCtx.filter = 'blur(12px)';
-  mCtx.drawImage(results.segmentationMask, 0, 0, W * scale, H * scale);
-  mCtx.filter = 'none';
+  // Supersample the mask at 3x, blur heavily, scale back — best edge quality
+  const SS = 3;
+  const bigMask = document.createElement('canvas');
+  bigMask.width = W * SS; bigMask.height = H * SS;
+  const bCtx = bigMask.getContext('2d');
+  bCtx.filter = `blur(${SS * 5}px)`;
+  bCtx.drawImage(results.segmentationMask, 0, 0, W * SS, H * SS);
+  bCtx.filter = 'none';
 
-  // Scale blurred mask back to native resolution (bilinear interpolation smooths further)
-  const softMaskCanvas = document.createElement('canvas');
-  softMaskCanvas.width = W; softMaskCanvas.height = H;
-  const smCtx = softMaskCanvas.getContext('2d');
-  smCtx.drawImage(maskCanvas, 0, 0, W, H);
-  const maskData = smCtx.getImageData(0, 0, W, H);
+  const softMask = document.createElement('canvas');
+  softMask.width = W; softMask.height = H;
+  const sCtx = softMask.getContext('2d');
+  sCtx.imageSmoothingEnabled = true;
+  sCtx.imageSmoothingQuality = 'high';
+  sCtx.drawImage(bigMask, 0, 0, W, H);
 
-  const rawData = rCtx.getImageData(0, 0, W, H);
+  // Apply mask to raw frame using destination-in
+  rCtx.globalCompositeOperation = 'destination-in';
+  rCtx.drawImage(softMask, 0, 0);
+  rCtx.globalCompositeOperation = 'source-over';
 
-  // Smoothstep + contrast boost for clean but soft edges
-  for (let i = 0; i < maskData.data.length; i += 4) {
-    const t = maskData.data[i] / 255;
-    // Smoothstep S-curve
-    const s = t * t * (3 - 2 * t);
-    // Boost contrast slightly so center is solid and only true edges feather
-    const boosted = Math.max(0, Math.min(1, (s - 0.3) / 0.4));
-    rawData.data[i + 3] = Math.round(boosted * 255);
+  // Smoothstep on alpha for clean interior + natural feathered edges
+  const px = rCtx.getImageData(0, 0, W, H);
+  for (let i = 3; i < px.data.length; i += 4) {
+    const a = px.data[i] / 255;
+    px.data[i] = Math.round(a * a * (3 - 2 * a) * 255);
   }
+  rCtx.putImageData(px, 0, 0);
 
-  // Put masked person onto a canvas, then mirror it
-  const personCanvas = document.createElement('canvas');
-  personCanvas.width = W; personCanvas.height = H;
-  const pCtx = personCanvas.getContext('2d');
-  pCtx.putImageData(rawData, 0, 0);
+  // Mirror the masked person
+  const mirC = document.createElement('canvas');
+  mirC.width = W; mirC.height = H;
+  const mCtx = mirC.getContext('2d');
+  mCtx.save(); mCtx.scale(-1,1); mCtx.translate(-W,0);
+  mCtx.drawImage(rawC, 0, 0);
+  mCtx.restore();
 
-  // Mirror the masked person horizontally (so it acts like a mirror)
-  const mirroredCanvas = document.createElement('canvas');
-  mirroredCanvas.width = W; mirroredCanvas.height = H;
-  const mirCtx = mirroredCanvas.getContext('2d');
-  mirCtx.save();
-  mirCtx.scale(-1, 1);
-  mirCtx.translate(-W, 0);
-  mirCtx.drawImage(personCanvas, 0, 0);
-  mirCtx.restore();
+  // Final masked mirrored person
+  const finC = document.createElement('canvas');
+  finC.width = W; finC.height = H;
+  const fCtx = finC.getContext('2d');
+  fCtx.save(); fCtx.scale(-1,1); fCtx.translate(-W,0);
+  fCtx.drawImage(rawC, 0, 0);
+  fCtx.restore();
 
-  // Composite: background first, then masked+mirrored person on top
   ctx.clearRect(0, 0, W, H);
-  ctx.globalCompositeOperation = 'source-over';
-  drawBackground(W, H);
-  ctx.globalCompositeOperation = 'source-over';
-  ctx.drawImage(mirroredCanvas, 0, 0);
-  ctx.globalCompositeOperation = 'source-over';
+  ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  drawBg(W, H);
+  ctx.drawImage(finC, 0, 0);
   drawRizal(W, H);
 
-  const vig = ctx.createRadialGradient(W/2, H/2, H*0.25, W/2, H/2, H*0.85);
+  const vig = ctx.createRadialGradient(W/2, H/2, H*0.2, W/2, H/2, H*0.9);
   vig.addColorStop(0, 'rgba(0,0,0,0)');
-  vig.addColorStop(1, 'rgba(0,0,0,0.2)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, W, H);
+  vig.addColorStop(1, 'rgba(0,0,0,0.25)');
+  ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
 }
 
-function drawBackground(W, H) {
+function drawBg(W, H) {
   if (currentBgImage && currentBgImage.naturalWidth > 0) {
-    ctx.drawImage(currentBgImage, 0, 0, W, H);
+    const iw = currentBgImage.naturalWidth, ih = currentBgImage.naturalHeight;
+    const scale = Math.max(W / iw, H / ih);
+    const sw = iw * scale, sh = ih * scale;
+    ctx.drawImage(currentBgImage, (W - sw) / 2, (H - sh) / 2, sw, sh);
   } else {
-    const grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, '#87CEEB');
-    grad.addColorStop(1, '#e8f4e8');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
-    ctx.font = '14px Lora, serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Place images/philippines.png (or selected country) in your images/ folder', W/2, H/2);
+    ctx.fillStyle = '#1a1410'; ctx.fillRect(0, 0, W, H);
   }
 }
 
 function drawRizal(W, H) {
-  if (!rizalImg.complete || rizalImg.naturalWidth === 0) {
-    ctx.fillStyle = 'rgba(255,255,255,0.4)';
-    ctx.font = '13px Lora, serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Place images/rizal.png in your images/ folder', W/2, H - 20);
-    return;
-  }
+  if (!rizalImg.complete || rizalImg.naturalWidth === 0) return;
   const rizalH = H * 0.65;
-  const aspectRatio = rizalImg.naturalWidth / rizalImg.naturalHeight;
-  const rizalW = rizalH * aspectRatio;
-  const x = W * 0.18 - rizalW / 2;
-  const y = H - rizalH;
-  ctx.drawImage(rizalImg, x, y, rizalW, rizalH);
-}
-
-function drawPreviewLoop() {
-  if (cameraStarted) return;
-  const W = canvas.width  || 640;
-  const H = canvas.height || 480;
-  ctx.clearRect(0, 0, W, H);
-  ctx.globalAlpha = 1;
-  ctx.globalCompositeOperation = 'source-over';
-  drawBackground(W, H);
-  drawRizal(W, H);
-  requestAnimationFrame(drawPreviewLoop);
+  const rizalW = rizalH * (rizalImg.naturalWidth / rizalImg.naturalHeight);
+  ctx.drawImage(rizalImg, W * 0.18 - rizalW / 2, H - rizalH, rizalW, rizalH);
 }
 
 function takePhoto() {
   if (!cameraStarted) return;
   const flash = document.createElement('div');
-  flash.style.cssText = 'position:fixed;inset:0;background:white;z-index:999;opacity:0;transition:opacity 0.1s;pointer-events:none';
+  flash.style.cssText = 'position:fixed;inset:0;background:white;z-index:999;opacity:0;transition:opacity 0.08s;pointer-events:none';
   document.body.appendChild(flash);
-  setTimeout(() => flash.style.opacity = '0.9', 10);
-  setTimeout(() => { flash.style.opacity = '0'; setTimeout(() => flash.remove(), 300); }, 150);
-
+  setTimeout(() => flash.style.opacity = '1', 10);
+  setTimeout(() => { flash.style.opacity = '0'; setTimeout(() => flash.remove(), 250); }, 120);
   photoDataURL = canvas.toDataURL('image/jpeg', 0.95);
   const c = COUNTRIES[selectedCountry];
   document.getElementById('result-img').src = photoDataURL;
-  document.getElementById('result-location-text').textContent = 'At ' + c.landmark;
-  document.getElementById('result-badge').textContent = c.flag + ' ' + c.name;
+  document.getElementById('result-location-text').textContent = c.landmark;
+  document.getElementById('result-badge').textContent = c.flag + '  ' + c.name.toUpperCase();
   document.getElementById('result-modal').classList.add('open');
   document.getElementById('btn-download').classList.add('show');
 }
@@ -761,29 +457,23 @@ function downloadPhoto() {
   a.click();
 }
 
-function closeResult() {
-  document.getElementById('result-modal').classList.remove('open');
-}
+function closeResult() { document.getElementById('result-modal').classList.remove('open'); }
 
 function stopCamera() {
-  if (mpCamera)      { mpCamera.stop(); mpCamera = null; }
-  if (videoStream)   { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; }
-  if (animFrame)     { cancelAnimationFrame(animFrame); animFrame = null; }
-  if (segmentation)  { segmentation = null; }
-  cameraStarted = false;
-  ctx.globalAlpha = 1;
-  ctx.globalCompositeOperation = 'source-over';
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawPreviewLoop();
+  if (mpCamera)    { mpCamera.stop(); mpCamera = null; }
+  if (videoStream) { videoStream.getTracks().forEach(t => t.stop()); videoStream = null; }
+  if (animFrame)   { cancelAnimationFrame(animFrame); animFrame = null; }
+  segmentation = null; cameraStarted = false;
+  ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
   const btn = document.getElementById('btn-camera');
-  btn.textContent = '📷 Start Camera';
-  btn.onclick = startCamera;
+  btn.textContent = '📷 Start Camera'; btn.onclick = startCamera; btn.disabled = false;
   document.getElementById('btn-snap').disabled = true;
   document.getElementById('btn-download').classList.remove('show');
+  previewLoop();
 }
 
-function showStatus(msg) { statusBar.textContent = msg; statusBar.classList.add('show'); }
-function hideStatus()    { statusBar.classList.remove('show'); }
+function showStatus(m) { statusBar.textContent = m; statusBar.classList.add('show'); }
+function hideStatus()  { statusBar.classList.remove('show'); }
 </script>
 </body>
 </html>

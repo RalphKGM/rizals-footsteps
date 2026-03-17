@@ -367,7 +367,7 @@ html, body {
     <button class="country-btn" data-country="spain" onclick="selectCountry(this)">
       <span class="country-flag">🇪🇸</span>
       <span class="country-name">Spain</span>
-      <span class="country-landmark">Madrid</span>
+      <span class="country-landmark">Catedral de Burgos</span>
     </button>
     <button class="country-btn" data-country="france" onclick="selectCountry(this)">
       <span class="country-flag">🇫🇷</span>
@@ -377,17 +377,17 @@ html, body {
     <button class="country-btn" data-country="germany" onclick="selectCountry(this)">
       <span class="country-flag">🇩🇪</span>
       <span class="country-name">Germany</span>
-      <span class="country-landmark">Brandenburg Gate</span>
+      <span class="country-landmark">Berlin Catedral</span>
     </button>
     <button class="country-btn" data-country="uk" onclick="selectCountry(this)">
       <span class="country-flag">🇬🇧</span>
       <span class="country-name">United Kingdom</span>
-      <span class="country-landmark">Tower Bridge</span>
+      <span class="country-landmark">London Bridge</span>
     </button>
     <button class="country-btn" data-country="belgium" onclick="selectCountry(this)">
       <span class="country-flag">🇧🇪</span>
       <span class="country-name">Belgium</span>
-      <span class="country-landmark">Grand Place</span>
+      <span class="country-landmark">Bruges</span>
     </button>
   </div>
 </div>
@@ -467,12 +467,12 @@ html, body {
 
 <script>
 const COUNTRIES = {
-  philippines: { name: 'Philippines',    landmark: 'Rizal Park, Manila',          flag: '🇵🇭', bg: 'images/philippines.png' },
-  spain:       { name: 'Spain',          landmark: 'Puerta del Sol, Madrid',       flag: '🇪🇸', bg: 'images/spain.png'       },
-  france:      { name: 'France',         landmark: 'Eiffel Tower, Paris',          flag: '🇫🇷', bg: 'images/france.png'      },
-  germany:     { name: 'Germany',        landmark: 'Brandenburg Gate, Berlin',     flag: '🇩🇪', bg: 'images/germany.png'     },
-  uk:          { name: 'United Kingdom', landmark: 'Tower Bridge, London',         flag: '🇬🇧', bg: 'images/uk.png'          },
-  belgium:     { name: 'Belgium',        landmark: 'Grand Place, Ghent',           flag: '🇧🇪', bg: 'images/belgium.png'     }
+  philippines: { name: 'Philippines',    landmark: 'Rizal Park',          flag: '🇵🇭', bg: 'images/philippines.jpg' },
+  spain:       { name: 'Spain',          landmark: 'Catedral de Burgos',       flag: '🇪🇸', bg: 'images/spain.png'       },
+  france:      { name: 'France',         landmark: 'Eiffel Tower',          flag: '🇫🇷', bg: 'images/france.jpg'      },
+  germany:     { name: 'Germany',        landmark: 'Berlin Catedral',     flag: '🇩🇪', bg: 'images/germany.png'     },
+  uk:          { name: 'United Kingdom', landmark: 'London Bridge',         flag: '🇬🇧', bg: 'images/uk.png'          },
+  belgium:     { name: 'Belgium',        landmark: 'Bruges',           flag: '🇧🇪', bg: 'images/belgium.png'     }
 };
 
 const bgImageCache = {};
@@ -625,32 +625,63 @@ function onSegmentationResults(results) {
   const W = canvas.width  = results.image.width;
   const H = canvas.height = results.image.height;
 
-  ctx.clearRect(0, 0, W, H);
-  drawBackground(W, H);
+  // Draw the raw camera frame (unmirrored) and mask onto separate canvases
+  const rawCanvas = document.createElement('canvas');
+  rawCanvas.width = W; rawCanvas.height = H;
+  const rCtx = rawCanvas.getContext('2d');
+  rCtx.drawImage(results.image, 0, 0, W, H);
 
+  // Draw mask to offscreen canvas at DOUBLE size, blur, then scale back down
+  // This gives much smoother edges than blurring at native resolution
+  const scale = 2;
   const maskCanvas = document.createElement('canvas');
-  maskCanvas.width = W; maskCanvas.height = H;
+  maskCanvas.width = W * scale; maskCanvas.height = H * scale;
   const mCtx = maskCanvas.getContext('2d');
-  mCtx.drawImage(results.segmentationMask, 0, 0, W, H);
-  const maskData = mCtx.getImageData(0, 0, W, H);
+  mCtx.filter = 'blur(12px)';
+  mCtx.drawImage(results.segmentationMask, 0, 0, W * scale, H * scale);
+  mCtx.filter = 'none';
 
+  // Scale blurred mask back to native resolution (bilinear interpolation smooths further)
+  const softMaskCanvas = document.createElement('canvas');
+  softMaskCanvas.width = W; softMaskCanvas.height = H;
+  const smCtx = softMaskCanvas.getContext('2d');
+  smCtx.drawImage(maskCanvas, 0, 0, W, H);
+  const maskData = smCtx.getImageData(0, 0, W, H);
+
+  const rawData = rCtx.getImageData(0, 0, W, H);
+
+  // Smoothstep + contrast boost for clean but soft edges
+  for (let i = 0; i < maskData.data.length; i += 4) {
+    const t = maskData.data[i] / 255;
+    // Smoothstep S-curve
+    const s = t * t * (3 - 2 * t);
+    // Boost contrast slightly so center is solid and only true edges feather
+    const boosted = Math.max(0, Math.min(1, (s - 0.3) / 0.4));
+    rawData.data[i + 3] = Math.round(boosted * 255);
+  }
+
+  // Put masked person onto a canvas, then mirror it
   const personCanvas = document.createElement('canvas');
   personCanvas.width = W; personCanvas.height = H;
   const pCtx = personCanvas.getContext('2d');
-  pCtx.save();
-  pCtx.scale(-1, 1);
-  pCtx.translate(-W, 0);
-  pCtx.drawImage(results.image, 0, 0, W, H);
-  pCtx.restore();
+  pCtx.putImageData(rawData, 0, 0);
 
-  const personData = pCtx.getImageData(0, 0, W, H);
-  for (let i = 0; i < maskData.data.length; i += 4) {
-    personData.data[i + 3] = maskData.data[i];
-  }
-  pCtx.putImageData(personData, 0, 0);
+  // Mirror the masked person horizontally (so it acts like a mirror)
+  const mirroredCanvas = document.createElement('canvas');
+  mirroredCanvas.width = W; mirroredCanvas.height = H;
+  const mirCtx = mirroredCanvas.getContext('2d');
+  mirCtx.save();
+  mirCtx.scale(-1, 1);
+  mirCtx.translate(-W, 0);
+  mirCtx.drawImage(personCanvas, 0, 0);
+  mirCtx.restore();
 
+  // Composite: background first, then masked+mirrored person on top
+  ctx.clearRect(0, 0, W, H);
   ctx.globalCompositeOperation = 'source-over';
-  ctx.drawImage(personCanvas, 0, 0);
+  drawBackground(W, H);
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.drawImage(mirroredCanvas, 0, 0);
   ctx.globalCompositeOperation = 'source-over';
   drawRizal(W, H);
 
@@ -685,10 +716,10 @@ function drawRizal(W, H) {
     ctx.fillText('Place images/rizal.png in your images/ folder', W/2, H - 20);
     return;
   }
-  const rizalH = H * 0.88;
+  const rizalH = H * 0.65;
   const aspectRatio = rizalImg.naturalWidth / rizalImg.naturalHeight;
   const rizalW = rizalH * aspectRatio;
-  const x = W * 0.68;
+  const x = W * 0.18 - rizalW / 2;
   const y = H - rizalH;
   ctx.drawImage(rizalImg, x, y, rizalW, rizalH);
 }
